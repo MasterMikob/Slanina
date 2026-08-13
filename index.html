@@ -30,9 +30,9 @@
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', serif;
     font-size: 17px;
-    line-height: 1.4;
+    line-height: 1.45;
     padding-bottom: 60px;
   }
 
@@ -144,12 +144,12 @@
     color: var(--accent-ink);
   }
 
-  .radio-group, .check-group {
+  .radio-group {
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
-  .radio-option, .check-option {
+  .radio-option {
     display: flex;
     align-items: flex-start;
     gap: 10px;
@@ -159,28 +159,92 @@
     background: #fffdf8;
     cursor: pointer;
   }
-  .radio-option input, .check-option input {
+  .radio-option input {
     width: 22px;
     height: 22px;
     margin-top: 2px;
     accent-color: var(--accent);
     flex-shrink: 0;
   }
-  .radio-option .opt-text strong,
-  .check-option .opt-text strong {
+  .radio-option .opt-text strong {
     display: block;
     font-size: 1rem;
   }
-  .radio-option .opt-text span,
-  .check-option .opt-text span {
+  .radio-option .opt-text span {
     display: block;
     font-size: 0.85rem;
     color: var(--ink-soft);
     margin-top: 2px;
   }
-  .radio-option.selected, .check-option.checked {
+  .radio-option.selected {
     border-color: var(--accent);
     background: #fdf3ec;
+  }
+
+  .help-text {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .help-text:last-child { margin-bottom: 0; }
+
+  .preset-grid {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .preset-grid button {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 10px 4px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: #fffdf8;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-family: inherit;
+    line-height: 1.25;
+  }
+  .preset-grid button strong {
+    font-size: 0.92rem;
+    color: var(--ink);
+  }
+  .preset-grid button small {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .preset-grid button.active {
+    border-color: var(--accent);
+    background: #fdf3ec;
+  }
+  .preset-grid button.active strong { color: var(--accent); }
+
+  input[type="range"] {
+    width: 100%;
+    height: 36px;
+    margin: 6px 0 2px;
+    accent-color: var(--accent);
+  }
+  .slider-readout {
+    text-align: center;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+  .slider-readout small {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
   }
 
   .stepper {
@@ -444,6 +508,8 @@
     .print-btn, .hang-adjust .stepper button, details.reference summary::-webkit-details-marker { display: none; }
     button { display: none !important; }
     .toggle-group { display: none; }
+    .preset-grid { display: none; }
+    input[type="range"] { display: none; }
     .print-only-unit {
       display: inline-flex;
       align-items: center;
@@ -535,15 +601,29 @@
     </div>
 
     <div class="field">
-      <label class="field-label">Extras</label>
-      <div class="check-group">
-        <label class="check-option" data-key="bay">
-          <input type="checkbox" id="bay-check">
-          <span class="opt-text"><strong>Bay leaf</strong><span>1 leaf per kg, rounded up</span></span>
+      <label class="field-label">Recipe / rub</label>
+      <p class="help-text">Three traditional variations, each building on the last. All use the same base cure above — the rub only changes what's added around it.</p>
+      <div class="radio-group" id="rub-group">
+        <label class="radio-option selected" data-value="plain">
+          <input type="radio" name="rub" value="plain" checked>
+          <span class="opt-text">
+            <strong>Domaća &mdash; Plain</strong>
+            <span>Just the base cure: salt, curing salt, sugar, pepper, garlic. The everyday farmhouse version that lets the pork speak for itself.</span>
+          </span>
         </label>
-        <label class="check-option" data-key="paprika">
-          <input type="checkbox" id="paprika-check">
-          <span class="opt-text"><strong>Paprika coating</strong><span>Applied after smoking, not part of the cure</span></span>
+        <label class="radio-option" data-value="bay">
+          <input type="radio" name="rub" value="bay">
+          <span class="opt-text">
+            <strong>Sa Lovorom &mdash; Bay Leaf</strong>
+            <span>Bay leaf goes into the cure alongside the base mix, for a subtle forest-cellar aroma. A classic countryside addition.</span>
+          </span>
+        </label>
+        <label class="radio-option" data-value="paprika">
+          <input type="radio" name="rub" value="paprika">
+          <span class="opt-text">
+            <strong>Sa Paprikom &mdash; Paprika-Crusted</strong>
+            <span>Bay leaf in the cure, then a sweet paprika and garlic crust rubbed on <em>after</em> smoking &mdash; the deep red finish you see hanging in village smokehouses. Decorative and flavour-only; it plays no role in preserving the meat.</span>
+          </span>
         </label>
       </div>
     </div>
@@ -582,11 +662,15 @@
   <section class="sheet" id="derived-sheet">
     <h2>Timing &amp; Target</h2>
 
+    <p class="help-text">The cure needs time for salt to reach the centre of the slab evenly &mdash; thicker meat needs longer, which is why the number below comes from the thickness you entered, not a fixed rule.</p>
+
     <table class="cure-table">
       <tbody>
-        <tr><td>Cure days</td><td class="amt" id="cure-days">0 days</td></tr>
+        <tr><td>Cure days (from thickness)</td><td class="amt" id="cure-days">0 days</td></tr>
       </tbody>
     </table>
+
+    <p class="help-text">Once it's cured, rinsed and smoked, the piece is hung to dry. <strong>The calendar can't tell you when it's actually done &mdash; weight can.</strong> Weigh the raw piece before curing, then weigh it again every few days while it hangs. It's ready to eat once it has lost this much of its original raw weight:</p>
 
     <div class="weight-loss-grid">
       <div class="wl-card">
@@ -598,17 +682,53 @@
         <div class="val" id="target-20">0</div>
       </div>
     </div>
+    <p class="help-text">15% is a softer, earlier finish; 20% gives a firmer, more concentrated result. Anywhere between is safe to eat &mdash; it's a matter of taste, not a hard cutoff.</p>
+  </section>
+
+  <!-- SMOKING PLAN -->
+  <section class="sheet" id="smoke-sheet">
+    <h2>Cold Smoke Plan</h2>
+    <p class="help-text">Maze smokers vary a lot &mdash; some fills burn out in 4&ndash;6 hours, others run past 20. Set how long <em>yours</em> actually lasts per fill and this works out how many sessions you need to reach a traditional total smoke exposure of around 32&ndash;48 hours.</p>
+
+    <div class="field">
+      <label class="field-label" for="smoke-hours-input">Smoker burn time per fill</label>
+      <input type="range" id="smoke-hours-input" min="4" max="24" step="1" value="10">
+      <div class="slider-readout"><span id="smoke-hours-value">10</span> h per fill</div>
+    </div>
+
+    <div class="note" id="smoke-sessions-note"></div>
   </section>
 
   <!-- TIMELINE -->
   <section class="sheet" id="timeline-sheet">
     <h2>Batch Timeline</h2>
 
+    <p class="help-text">This only sets the dates shown below &mdash; it doesn't change the cure itself. See Timing &amp; Target above for how to judge real doneness by weight, not by date.</p>
+
+    <div class="field">
+      <label class="field-label">Hang &amp; dry &mdash; flavour preset</label>
+      <div class="preset-grid" id="hang-preset-group">
+        <button type="button" data-weeks="2">
+          <strong>Mild</strong>
+          <small>2 weeks</small>
+        </button>
+        <button type="button" data-weeks="3" class="active">
+          <strong>Traditional</strong>
+          <small>3 weeks</small>
+        </button>
+        <button type="button" data-weeks="5">
+          <strong>Intense</strong>
+          <small>5 weeks</small>
+        </button>
+      </div>
+      <p class="help-text">Longer hangs lose more moisture, so the texture firms up and the flavour concentrates. Pick a preset or fine-tune below (1&ndash;12 weeks).</p>
+    </div>
+
     <div class="hang-adjust">
       <label for="hang-weeks-input">Hang &amp; dry (weeks)</label>
       <div class="stepper">
         <button type="button" id="hang-dec">&minus;</button>
-        <input type="number" id="hang-weeks-input" min="1" step="1" value="3" inputmode="numeric">
+        <input type="number" id="hang-weeks-input" min="1" max="12" step="1" value="3" inputmode="numeric">
         <button type="button" id="hang-inc">+</button>
       </div>
     </div>
@@ -646,6 +766,12 @@
   'use strict';
 
   // ---- In-memory state (no localStorage/sessionStorage) ----
+  var HANG_WEEKS_MIN = 1;
+  var HANG_WEEKS_MAX = 12;
+  var SMOKE_HOURS_MIN = 4;
+  var SMOKE_HOURS_MAX = 24;
+  var TARGET_SMOKE_HOURS = 40; // midpoint of the traditional 32-48h total smoke exposure
+
   var state = {
     weightValue: 2,
     weightUnit: 'kg',
@@ -653,9 +779,11 @@
     pieces: 1,
     cureType: '1',
     startDate: todayISO(),
+    rub: 'plain',
     bay: false,
     paprika: false,
     hangWeeks: 3,
+    smokeHours: 10,
     stepDone: {} // stepId -> bool
   };
 
@@ -681,8 +809,7 @@
     cureTypeGuidance: document.getElementById('cure-type-guidance'),
     cureTypeWarning: document.getElementById('cure-type-warning'),
     startDateInput: document.getElementById('start-date-input'),
-    bayCheck: document.getElementById('bay-check'),
-    paprikaCheck: document.getElementById('paprika-check'),
+    rubGroup: document.getElementById('rub-group'),
 
     csCureNum: document.getElementById('cs-cure-num'),
     csAmount: document.getElementById('cs-amount'),
@@ -707,7 +834,12 @@
     hangWeeksInput: document.getElementById('hang-weeks-input'),
     hangDec: document.getElementById('hang-dec'),
     hangInc: document.getElementById('hang-inc'),
+    hangPresetGroup: document.getElementById('hang-preset-group'),
     timelineList: document.getElementById('timeline-list'),
+
+    smokeHoursInput: document.getElementById('smoke-hours-input'),
+    smokeHoursValue: document.getElementById('smoke-hours-value'),
+    smokeSessionsNote: document.getElementById('smoke-sessions-note'),
 
     printBtn: document.getElementById('print-btn'),
     printUnit: document.getElementById('print-unit')
@@ -774,6 +906,16 @@
     };
   }
 
+  function clamp(v, min, max) {
+    return Math.max(min, Math.min(max, v));
+  }
+
+  // Sessions needed to reach the target total smoke exposure, given how long
+  // one fill of the user's smoker actually burns for.
+  function computeSmokeSessions(hoursPerSession) {
+    return Math.max(2, Math.ceil(TARGET_SMOKE_HOURS / hoursPerSession));
+  }
+
   // ---- Render inputs UI state ----
   function updateUnitButtons() {
     el.unitG.classList.toggle('active', state.weightUnit === 'g');
@@ -790,11 +932,21 @@
     });
   }
 
-  function updateCheckUI() {
-    var bayOpt = el.bayCheck.closest('.check-option');
-    var paprikaOpt = el.paprikaCheck.closest('.check-option');
-    bayOpt.classList.toggle('checked', state.bay);
-    paprikaOpt.classList.toggle('checked', state.paprika);
+  function updateRubUI() {
+    var options = el.rubGroup.querySelectorAll('.radio-option');
+    options.forEach(function (opt) {
+      var isSel = opt.getAttribute('data-value') === state.rub;
+      opt.classList.toggle('selected', isSel);
+      opt.querySelector('input').checked = isSel;
+    });
+  }
+
+  function updateHangPresetUI() {
+    var buttons = el.hangPresetGroup.querySelectorAll('button');
+    buttons.forEach(function (btn) {
+      var weeks = parseInt(btn.getAttribute('data-weeks'), 10);
+      btn.classList.toggle('active', weeks === state.hangWeeks);
+    });
   }
 
   // ---- Main render ----
@@ -881,11 +1033,19 @@
     el.target15.textContent = formatGrams(loss15);
     el.target20.textContent = formatGrams(loss20);
 
-    renderTimeline(cureDays);
+    // Smoking plan: work out sessions needed from the user's actual smoker burn time
+    var sessions = computeSmokeSessions(state.smokeHours);
+    var totalSmokeHours = sessions * state.smokeHours;
+    el.smokeSessionsNote.innerHTML =
+      'With fills lasting <strong>' + state.smokeHours + ' h</strong>, you\'ll need about ' +
+      '<strong>' + sessions + ' session' + (sessions === 1 ? '' : 's') + '</strong> ' +
+      '(~' + totalSmokeHours + ' h total smoke exposure), with 24 h rest between each.';
+
+    renderTimeline(cureDays, sessions, state.smokeHours);
   }
 
   // ---- Timeline ----
-  function buildSteps(cureDays) {
+  function buildSteps(cureDays, smokeSessions, smokeHours) {
     var steps = [];
     var cursor = state.startDate;
 
@@ -893,7 +1053,7 @@
     steps.push({
       id: 'cure',
       title: 'Cure',
-      detail: 'Fridge 2–4°C, flip daily.',
+      detail: 'Fridge 2–4°C, flip daily so the equilibrium cure reaches every surface evenly. Don\'t rush this — the salt is doing slow, precise work.',
       days: cureDays
     });
 
@@ -901,7 +1061,7 @@
     steps.push({
       id: 'rinse',
       title: 'Rinse + equalise',
-      detail: 'Rinse cure off, pat dry, rest to let salt equalise through the meat.',
+      detail: 'Rinse the surface cure off under cold water, pat fully dry, then rest uncovered in the fridge so the absorbed salt spreads out evenly before smoking.',
       days: 2
     });
 
@@ -909,16 +1069,17 @@
     steps.push({
       id: 'pellicle',
       title: 'Pellicle',
-      detail: 'Surface dry and tacky, uncovered in the fridge or a cool airy spot.',
+      detail: 'Leave uncovered in the fridge or a cool airy spot until the surface feels dry and slightly tacky, not wet. This skin (the pellicle) helps smoke cling to the meat.',
       days: 2
     });
 
-    // 4. Cold smoke - 4 sessions, ~8 days total (8-12h each + 24h rest x3 + last session)
+    // 4. Cold smoke - session count driven by the user's actual smoker burn time
+    var smokeDays = Math.max(1, smokeSessions * 2 - 1);
     steps.push({
       id: 'smoke',
       title: 'Cold smoke',
-      detail: '4 sessions, 8–12 h each, 24 h rest between. Keep below 25°C, target 15–20°C.',
-      days: 8
+      detail: smokeSessions + ' session' + (smokeSessions === 1 ? '' : 's') + ' at ' + smokeHours + ' h each (your smoker\'s burn time), with 24 h rest between. Keep smoke below 25°C, target 15–20°C.',
+      days: smokeDays
     });
 
     // 5. Paprika coat (optional)
@@ -926,7 +1087,7 @@
       steps.push({
         id: 'paprika',
         title: 'Paprika coat',
-        detail: 'Coat with sweet paprika + garlic after smoking, before hanging.',
+        detail: 'Rub sweet paprika + garlic over the surface. Decorative and flavour-only — it plays no role in preserving the meat.',
         days: 1
       });
     }
@@ -936,7 +1097,7 @@
     steps.push({
       id: 'hang',
       title: 'Hang and dry',
-      detail: 'Cool airy spot, weigh periodically toward 15–20% weight loss.',
+      detail: 'Cool, airy spot (roughly 10–15°C, 60–70% humidity). Weigh every few days — it\'s ready once it has lost 15–20% of its original raw weight, not on a fixed date.',
       days: hangDays
     });
 
@@ -957,11 +1118,11 @@
       start = toISO(endDate);
     }
 
-    // 7. Ready date = end of last step
+    // 7. Ready date = end of last step (an estimate — confirm with the weight target above)
     result.push({
       id: 'ready',
       title: 'Ready',
-      detail: 'Slanina is ready. Slice thin and enjoy.',
+      detail: 'Estimated finish. Confirm by weight against the Timing & Target section before slicing — if it\'s not there yet, keep hanging and check again in a few days.',
       start: start instanceof Date ? start : addDays(start, 0),
       end: null,
       isMilestone: true
@@ -978,8 +1139,8 @@
     return y + '-' + m + '-' + day;
   }
 
-  function renderTimeline(cureDays) {
-    var steps = buildSteps(cureDays);
+  function renderTimeline(cureDays, smokeSessions, smokeHours) {
+    var steps = buildSteps(cureDays, smokeSessions, smokeHours);
     el.timelineList.innerHTML = '';
 
     steps.forEach(function (step) {
@@ -1015,7 +1176,7 @@
       cb.addEventListener('change', function () {
         var id = cb.getAttribute('data-step');
         state.stepDone[id] = cb.checked;
-        renderTimeline(cureDays);
+        renderTimeline(cureDays, smokeSessions, smokeHours);
       });
     });
   }
@@ -1066,42 +1227,47 @@
     render();
   });
 
-  el.bayCheck.addEventListener('change', function () {
-    state.bay = el.bayCheck.checked;
-    updateCheckUI();
+  el.rubGroup.addEventListener('click', function (e) {
+    var opt = e.target.closest('.radio-option');
+    if (!opt) return;
+    state.rub = opt.getAttribute('data-value');
+    state.bay = state.rub === 'bay' || state.rub === 'paprika';
+    state.paprika = state.rub === 'paprika';
+    updateRubUI();
     render();
   });
-  el.paprikaCheck.addEventListener('change', function () {
-    state.paprika = el.paprikaCheck.checked;
-    updateCheckUI();
+
+  function setHangWeeks(v) {
+    state.hangWeeks = clamp(Math.round(v), HANG_WEEKS_MIN, HANG_WEEKS_MAX);
+    el.hangWeeksInput.value = state.hangWeeks;
+    updateHangPresetUI();
     render();
-  });
-  el.bayCheck.closest('.check-option').addEventListener('click', function (e) {
-    if (e.target.tagName !== 'INPUT') {
-      el.bayCheck.checked = !el.bayCheck.checked;
-      el.bayCheck.dispatchEvent(new Event('change'));
-    }
-  });
-  el.paprikaCheck.closest('.check-option').addEventListener('click', function (e) {
-    if (e.target.tagName !== 'INPUT') {
-      el.paprikaCheck.checked = !el.paprikaCheck.checked;
-      el.paprikaCheck.dispatchEvent(new Event('change'));
-    }
-  });
+  }
 
   el.hangWeeksInput.addEventListener('input', function () {
     var v = parseInt(el.hangWeeksInput.value, 10);
-    state.hangWeeks = isNaN(v) || v < 1 ? 1 : v;
-    render();
+    if (isNaN(v)) return;
+    setHangWeeks(v);
+  });
+  el.hangWeeksInput.addEventListener('blur', function () {
+    setHangWeeks(parseInt(el.hangWeeksInput.value, 10) || HANG_WEEKS_MIN);
   });
   el.hangDec.addEventListener('click', function () {
-    state.hangWeeks = Math.max(1, state.hangWeeks - 1);
-    el.hangWeeksInput.value = state.hangWeeks;
-    render();
+    setHangWeeks(state.hangWeeks - 1);
   });
   el.hangInc.addEventListener('click', function () {
-    state.hangWeeks = state.hangWeeks + 1;
-    el.hangWeeksInput.value = state.hangWeeks;
+    setHangWeeks(state.hangWeeks + 1);
+  });
+  el.hangPresetGroup.addEventListener('click', function (e) {
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    setHangWeeks(parseInt(btn.getAttribute('data-weeks'), 10));
+  });
+
+  el.smokeHoursInput.addEventListener('input', function () {
+    var v = clamp(parseInt(el.smokeHoursInput.value, 10) || SMOKE_HOURS_MIN, SMOKE_HOURS_MIN, SMOKE_HOURS_MAX);
+    state.smokeHours = v;
+    el.smokeHoursValue.textContent = v;
     render();
   });
 
@@ -1112,7 +1278,8 @@
   // ---- Init ----
   updateUnitButtons();
   updateCureTypeUI();
-  updateCheckUI();
+  updateRubUI();
+  updateHangPresetUI();
   render();
 })();
 </script>

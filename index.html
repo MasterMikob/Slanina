@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Slanina Calculator</title>
+<style>
+  :root{
+    --paper: #f2ead9;
+    --paper-dark: #e9dfc7;
+    --ink: #2a2118;
+    --ink-soft: #5a4c3c;
+    --rule: #c9b892;
+    --accent: #a8391f;
+    --accent-ink: #fff8ec;
+    --danger-bg: #fff2ee;
+    --danger-border: #a8391f;
+    --ok: #4b6b3a;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', serif;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.4;
+    padding-bottom: 60px;
+  }
+
+  h1, h2, h3, legend {
+    font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+    color: var(--ink);
+    margin: 0 0 0.4em 0;
+  }
+
+  header.masthead {
+    background: var(--ink);
+    color: var(--accent-ink);
+    padding: 22px 18px 18px;
+    border-bottom: 6px solid var(--accent);
+  }
+  header.masthead h1 {
+    color: var(--accent-ink);
+    font-size: 1.7rem;
+    letter-spacing: 0.02em;
+    margin-bottom: 2px;
+  }
+  header.masthead p {
+    margin: 0;
+    color: #d9cdb5;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  section.sheet {
+    background: var(--paper-dark);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  section.sheet h2 {
+    font-size: 1.15rem;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+  .field:last-child { margin-bottom: 0; }
+
+  label.field-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  input[type="number"],
+  input[type="date"] {
+    width: 100%;
+    font-size: 1.15rem;
+    padding: 12px 10px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: #fffdf8;
+    color: var(--ink);
+    font-family: inherit;
+  }
+  input[type="number"]:focus,
+  input[type="date"]:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .row {
+    display: flex;
+    gap: 10px;
+  }
+  .row > * { flex: 1; }
+
+  .toggle-group {
+    display: flex;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .toggle-group button {
+    flex: 1;
+    padding: 12px 8px;
+    background: #fffdf8;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-left: 1px solid var(--rule);
+  }
+  .toggle-group button:first-child { border-left: none; }
+  .toggle-group button.active {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .radio-group, .check-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .radio-option, .check-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: #fffdf8;
+    cursor: pointer;
+  }
+  .radio-option input, .check-option input {
+    width: 22px;
+    height: 22px;
+    margin-top: 2px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+  }
+  .radio-option .opt-text strong,
+  .check-option .opt-text strong {
+    display: block;
+    font-size: 1rem;
+  }
+  .radio-option .opt-text span,
+  .check-option .opt-text span {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+  .radio-option.selected, .check-option.checked {
+    border-color: var(--accent);
+    background: #fdf3ec;
+  }
+
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .stepper button {
+    width: 46px;
+    height: 46px;
+    font-size: 1.4rem;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: #fffdf8;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .stepper input {
+    text-align: center;
+    flex: 1;
+  }
+
+  .warning {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: #fff6e0;
+    border: 1px solid #c9a227;
+    border-left-width: 5px;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    color: #5a4a10;
+  }
+  .note {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: #eef2e6;
+    border-left: 5px solid var(--ok);
+    border-radius: 3px;
+    font-size: 0.9rem;
+    color: #33421f;
+  }
+
+  /* Results */
+  .cure-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+  }
+  .cure-table td {
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .cure-table td.amt {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    font-size: 1.1rem;
+    white-space: nowrap;
+  }
+  .cure-table tr:last-child td { border-bottom: none; }
+
+  .curing-salt-box {
+    background: var(--danger-bg);
+    border: 3px solid var(--danger-border);
+    border-radius: 4px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .curing-salt-box .label {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+    color: var(--danger-border);
+  }
+  .curing-salt-box .amount {
+    font-size: 2.1rem;
+    font-weight: 800;
+    font-family: Georgia, serif;
+    color: var(--ink);
+    margin: 4px 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .curing-salt-box .caveat {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--danger-border);
+  }
+
+  .per-piece {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--rule);
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+  }
+  .per-piece strong { color: var(--ink); }
+
+  .weight-loss-grid {
+    display: flex;
+    gap: 10px;
+  }
+  .weight-loss-grid .wl-card {
+    flex: 1;
+    background: #fffdf8;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 10px;
+    text-align: center;
+  }
+  .weight-loss-grid .wl-card .pct {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    letter-spacing: 0.03em;
+  }
+  .weight-loss-grid .wl-card .val {
+    font-size: 1.3rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Timeline */
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 3px solid var(--accent);
+    margin-left: 10px;
+  }
+  .timeline li {
+    position: relative;
+    padding: 4px 0 20px 22px;
+  }
+  .timeline li:last-child { padding-bottom: 4px; }
+  .timeline li::before {
+    content: "";
+    position: absolute;
+    left: -9px;
+    top: 6px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--paper-dark);
+    border: 3px solid var(--accent);
+  }
+  .timeline li.done::before {
+    background: var(--accent);
+  }
+  .step-card {
+    background: #fffdf8;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 10px 12px;
+  }
+  .step-card .step-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .step-card input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    margin-top: 2px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .step-card .step-dates {
+    font-size: 0.82rem;
+    color: var(--accent);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .step-card .step-title {
+    font-weight: 700;
+    font-size: 1.02rem;
+    margin: 2px 0 3px;
+  }
+  .step-card .step-detail {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+  }
+  .step-card.done { opacity: 0.6; }
+  .step-card.done .step-title { text-decoration: line-through; }
+
+  /* Adjustable hang weeks */
+  .hang-adjust {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .hang-adjust label {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .hang-adjust .stepper { max-width: 180px; }
+
+  /* Reference / collapsible */
+  details.reference {
+    background: var(--paper-dark);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 4px 16px;
+    margin-bottom: 16px;
+  }
+  details.reference summary {
+    padding: 12px 0;
+    font-weight: 700;
+    font-family: Georgia, serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+  details.reference ul {
+    padding-left: 20px;
+    margin: 0 0 14px 0;
+  }
+  details.reference li {
+    margin-bottom: 10px;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  details.reference h3 {
+    font-size: 0.95rem;
+    margin-top: 10px;
+  }
+
+  footer.credit {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    padding: 10px 16px 30px;
+  }
+
+  .print-only-unit {
+    display: none;
+  }
+
+  .print-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: none;
+    border-radius: 3px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+
+  /* Print stylesheet */
+  @media print {
+    header.masthead { background: none; color: var(--ink); border-bottom: 2px solid var(--ink); }
+    header.masthead h1, header.masthead p { color: var(--ink); }
+    body { font-size: 12pt; padding-bottom: 0; }
+    .print-btn, .hang-adjust .stepper button, details.reference summary::-webkit-details-marker { display: none; }
+    button { display: none !important; }
+    .toggle-group { display: none; }
+    .print-only-unit {
+      display: inline-flex;
+      align-items: center;
+      padding: 0 14px;
+      border: 1px solid #999;
+      border-radius: 3px;
+      font-weight: 700;
+    }
+    .stepper { border: 1px solid #999; border-radius: 3px; }
+    .stepper input { border: none; }
+    section.sheet { break-inside: avoid; border: 1px solid #999; background: #fff; }
+    .curing-salt-box { background: #fff; border: 2px solid #000; }
+    .timeline { border-left: 2px solid #000; }
+    .timeline li::before { border-color: #000; background: #fff; }
+    .timeline li.done::before { background: #000; }
+    input[type="number"], input[type="date"] { border: 1px solid #999; }
+    details.reference { break-inside: avoid; }
+    details.reference[open] summary { margin-bottom: 6px; }
+    a { text-decoration: none; color: inherit; }
+    .stepper button { visibility: hidden; }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <h1>Slanina Calculator</h1>
+  <p>Curing worksheet &middot; Serbian-style cold-smoked pork belly</p>
+</header>
+
+<main>
+
+  <!-- INPUTS -->
+  <section class="sheet" id="inputs-sheet">
+    <h2>The Meat</h2>
+
+    <div class="field">
+      <label class="field-label" for="weight-input">Meat weight</label>
+      <div class="row">
+        <input type="number" id="weight-input" inputmode="decimal" min="0" step="0.01" value="2">
+        <div class="toggle-group" role="group" aria-label="Weight unit">
+          <button type="button" id="unit-g" data-unit="g">g</button>
+          <button type="button" id="unit-kg" data-unit="kg" class="active">kg</button>
+        </div>
+        <span class="print-only-unit" id="print-unit">kg</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="thickness-input">Slab thickness (cm)</label>
+      <input type="number" id="thickness-input" inputmode="decimal" min="0" step="0.1" value="4">
+      <div id="thickness-warning"></div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="pieces-input">Number of pieces</label>
+      <div class="stepper">
+        <button type="button" id="pieces-dec">&minus;</button>
+        <input type="number" id="pieces-input" min="1" step="1" value="1" inputmode="numeric">
+        <button type="button" id="pieces-inc">+</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Cure type</label>
+      <div class="radio-group" id="cure-type-group">
+        <label class="radio-option selected" data-value="1">
+          <input type="radio" name="cure-type" value="1" checked>
+          <span class="opt-text">
+            <strong>Cure #1</strong>
+            <span>Sodium nitrite &mdash; for a hang under ~4 weeks, then refrigerate.</span>
+          </span>
+        </label>
+        <label class="radio-option" data-value="2">
+          <input type="radio" name="cure-type" value="2">
+          <span class="opt-text">
+            <strong>Cure #2</strong>
+            <span>Nitrite + nitrate &mdash; for a long hang of 6+ weeks at cellar temperature.</span>
+          </span>
+        </label>
+      </div>
+      <div id="cure-type-guidance" class="note"></div>
+      <div id="cure-type-warning"></div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="start-date-input">Start date</label>
+      <input type="date" id="start-date-input">
+    </div>
+
+    <div class="field">
+      <label class="field-label">Extras</label>
+      <div class="check-group">
+        <label class="check-option" data-key="bay">
+          <input type="checkbox" id="bay-check">
+          <span class="opt-text"><strong>Bay leaf</strong><span>1 leaf per kg, rounded up</span></span>
+        </label>
+        <label class="check-option" data-key="paprika">
+          <input type="checkbox" id="paprika-check">
+          <span class="opt-text"><strong>Paprika coating</strong><span>Applied after smoking, not part of the cure</span></span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="sheet" id="results-sheet">
+    <h2>The Cure (per batch)</h2>
+
+    <div class="curing-salt-box">
+      <div class="label">Curing salt (Cure #<span id="cs-cure-num">1</span>)</div>
+      <div class="amount"><span id="cs-amount">0.0</span> g</div>
+      <div class="caveat">Weigh on 0.1 g scales. Never estimate.</div>
+    </div>
+
+    <table class="cure-table">
+      <tbody>
+        <tr><td>Non-iodised salt</td><td class="amt" id="salt-amount">0 g</td></tr>
+        <tr><td>Sugar</td><td class="amt" id="sugar-amount">0 g</td></tr>
+        <tr><td>Cracked black pepper</td><td class="amt" id="pepper-amount">0 g</td></tr>
+        <tr><td>Garlic</td><td class="amt" id="garlic-amount">0 cloves</td></tr>
+        <tr id="bay-row" style="display:none"><td>Bay leaf</td><td class="amt" id="bay-amount">0 leaves</td></tr>
+      </tbody>
+    </table>
+
+    <div id="paprika-note" class="note" style="display:none">
+      <strong>After smoking:</strong> coat with <span id="paprika-grams">0</span> g sweet paprika + <span id="paprika-garlic">0</span> cloves garlic (per kg). Applied after smoking, not part of the cure mix.
+    </div>
+
+    <div id="per-piece-block" class="per-piece" style="display:none">
+      <strong>Per piece</strong> (<span id="pp-count">1</span> pieces, <span id="pp-weight">0</span> each):<br>
+      <span id="pp-details"></span>
+    </div>
+  </section>
+
+  <section class="sheet" id="derived-sheet">
+    <h2>Timing &amp; Target</h2>
+
+    <table class="cure-table">
+      <tbody>
+        <tr><td>Cure days</td><td class="amt" id="cure-days">0 days</td></tr>
+      </tbody>
+    </table>
+
+    <div class="weight-loss-grid">
+      <div class="wl-card">
+        <div class="pct">15% loss</div>
+        <div class="val" id="target-15">0</div>
+      </div>
+      <div class="wl-card">
+        <div class="pct">20% loss</div>
+        <div class="val" id="target-20">0</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="sheet" id="timeline-sheet">
+    <h2>Batch Timeline</h2>
+
+    <div class="hang-adjust">
+      <label for="hang-weeks-input">Hang &amp; dry (weeks)</label>
+      <div class="stepper">
+        <button type="button" id="hang-dec">&minus;</button>
+        <input type="number" id="hang-weeks-input" min="1" step="1" value="3" inputmode="numeric">
+        <button type="button" id="hang-inc">+</button>
+      </div>
+    </div>
+
+    <ul class="timeline" id="timeline-list"></ul>
+  </section>
+
+  <button class="print-btn" id="print-btn">Print batch sheet</button>
+
+  <!-- REFERENCE -->
+  <details class="reference">
+    <summary>Reference notes</summary>
+    <h3>Cold smoking</h3>
+    <ul>
+      <li>Keep smoke below 25&deg;C, target 15&ndash;20&deg;C. Above 25&deg;C the fat renders and you're in the bacterial danger zone.</li>
+      <li>Wood: beech, oak, apple, cherry. Never pine or eucalyptus.</li>
+    </ul>
+    <h3>Signs of spoilage</h3>
+    <ul>
+      <li>Discard the batch if it smells sour or ammoniac, is slimy, or grows fuzzy black/green mould.</li>
+      <li>A fine white bloom is normal.</li>
+    </ul>
+    <h3>Curing salt safety</h3>
+    <ul>
+      <li>Curing salt is toxic in quantity. Weigh it, never estimate.</li>
+    </ul>
+  </details>
+
+</main>
+
+<footer class="credit">Slanina Calculator &middot; equilibrium curing, offline worksheet</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---- In-memory state (no localStorage/sessionStorage) ----
+  var state = {
+    weightValue: 2,
+    weightUnit: 'kg',
+    thicknessCm: 4,
+    pieces: 1,
+    cureType: '1',
+    startDate: todayISO(),
+    bay: false,
+    paprika: false,
+    hangWeeks: 3,
+    stepDone: {} // stepId -> bool
+  };
+
+  function todayISO() {
+    var d = new Date();
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + day;
+  }
+
+  // ---- Element refs ----
+  var el = {
+    weightInput: document.getElementById('weight-input'),
+    unitG: document.getElementById('unit-g'),
+    unitKg: document.getElementById('unit-kg'),
+    thicknessInput: document.getElementById('thickness-input'),
+    thicknessWarning: document.getElementById('thickness-warning'),
+    piecesInput: document.getElementById('pieces-input'),
+    piecesDec: document.getElementById('pieces-dec'),
+    piecesInc: document.getElementById('pieces-inc'),
+    cureTypeGroup: document.getElementById('cure-type-group'),
+    cureTypeGuidance: document.getElementById('cure-type-guidance'),
+    cureTypeWarning: document.getElementById('cure-type-warning'),
+    startDateInput: document.getElementById('start-date-input'),
+    bayCheck: document.getElementById('bay-check'),
+    paprikaCheck: document.getElementById('paprika-check'),
+
+    csCureNum: document.getElementById('cs-cure-num'),
+    csAmount: document.getElementById('cs-amount'),
+    saltAmount: document.getElementById('salt-amount'),
+    sugarAmount: document.getElementById('sugar-amount'),
+    pepperAmount: document.getElementById('pepper-amount'),
+    garlicAmount: document.getElementById('garlic-amount'),
+    bayRow: document.getElementById('bay-row'),
+    bayAmount: document.getElementById('bay-amount'),
+    paprikaNote: document.getElementById('paprika-note'),
+    paprikaGrams: document.getElementById('paprika-grams'),
+    paprikaGarlic: document.getElementById('paprika-garlic'),
+    perPieceBlock: document.getElementById('per-piece-block'),
+    ppCount: document.getElementById('pp-count'),
+    ppWeight: document.getElementById('pp-weight'),
+    ppDetails: document.getElementById('pp-details'),
+
+    cureDays: document.getElementById('cure-days'),
+    target15: document.getElementById('target-15'),
+    target20: document.getElementById('target-20'),
+
+    hangWeeksInput: document.getElementById('hang-weeks-input'),
+    hangDec: document.getElementById('hang-dec'),
+    hangInc: document.getElementById('hang-inc'),
+    timelineList: document.getElementById('timeline-list'),
+
+    printBtn: document.getElementById('print-btn'),
+    printUnit: document.getElementById('print-unit')
+  };
+
+  el.startDateInput.value = state.startDate;
+
+  // ---- Helpers ----
+  function round(n) { return Math.round(n); }
+  function round1(n) { return Math.round(n * 10) / 10; }
+
+  function formatGrams(g) {
+    if (g >= 1000) return (g / 1000).toFixed(g % 1000 === 0 ? 0 : 2) + ' kg';
+    return round(g) + ' g';
+  }
+
+  function getWeightInKg() {
+    var v = parseFloat(el.weightInput.value);
+    if (isNaN(v) || v < 0) v = 0;
+    return state.weightUnit === 'kg' ? v : v / 1000;
+  }
+
+  function addDays(dateStr, days) {
+    var d = new Date(dateStr + 'T00:00:00');
+    d.setDate(d.getDate() + Math.round(days));
+    return d;
+  }
+
+  function formatDate(d) {
+    var opts = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+    return d.toLocaleDateString(undefined, opts);
+  }
+
+  function formatDateShort(d) {
+    var opts = { day: 'numeric', month: 'short' };
+    return d.toLocaleDateString(undefined, opts);
+  }
+
+  // ---- Cure math ----
+  function computeCure(kg) {
+    var saltG = kg * 25;
+    // HARD SAFETY CAP: curing salt must never exceed 2.5 g per kg of meat, regardless of inputs.
+    var CURING_SALT_MAX_PER_KG = 2.5;
+    var curingSaltG = Math.min(kg * 2.5, kg * CURING_SALT_MAX_PER_KG);
+    var sugarG = kg * 5;
+    var pepperG = kg * 3;
+    var garlicCloves = Math.round(kg * 3.5);
+    var bayLeaves = Math.ceil(kg * 1);
+
+    return {
+      saltG: saltG,
+      curingSaltG: curingSaltG,
+      sugarG: sugarG,
+      pepperG: pepperG,
+      garlicCloves: garlicCloves,
+      bayLeaves: bayLeaves
+    };
+  }
+
+  function computePaprika(kg) {
+    return {
+      paprikaG: round(kg * 15),
+      garlicCloves: round(kg * 2)
+    };
+  }
+
+  // ---- Render inputs UI state ----
+  function updateUnitButtons() {
+    el.unitG.classList.toggle('active', state.weightUnit === 'g');
+    el.unitKg.classList.toggle('active', state.weightUnit === 'kg');
+    el.printUnit.textContent = state.weightUnit;
+  }
+
+  function updateCureTypeUI() {
+    var options = el.cureTypeGroup.querySelectorAll('.radio-option');
+    options.forEach(function (opt) {
+      var isSel = opt.getAttribute('data-value') === state.cureType;
+      opt.classList.toggle('selected', isSel);
+      opt.querySelector('input').checked = isSel;
+    });
+  }
+
+  function updateCheckUI() {
+    var bayOpt = el.bayCheck.closest('.check-option');
+    var paprikaOpt = el.paprikaCheck.closest('.check-option');
+    bayOpt.classList.toggle('checked', state.bay);
+    paprikaOpt.classList.toggle('checked', state.paprika);
+  }
+
+  // ---- Main render ----
+  function render() {
+    var totalKg = getWeightInKg();
+    var thickness = parseFloat(el.thicknessInput.value);
+    if (isNaN(thickness) || thickness < 0) thickness = 0;
+    var pieces = parseInt(el.piecesInput.value, 10);
+    if (isNaN(pieces) || pieces < 1) pieces = 1;
+
+    // Thickness warning
+    el.thicknessWarning.innerHTML = '';
+    if (thickness > 0 && thickness < 3) {
+      el.thicknessWarning.innerHTML = '<div class="warning">Thin belly cures fast and dries to leather &mdash; 4&ndash;5 cm is ideal.</div>';
+    }
+
+    // Cure type guidance + warning
+    var cureDaysRaw = (thickness * 2) + 2;
+    var cureDays = Math.max(7, Math.min(21, cureDaysRaw));
+
+    if (state.cureType === '1') {
+      el.cureTypeGuidance.textContent = 'Cure #1 suits a hang under ~4 weeks, then refrigerate the finished product.';
+    } else {
+      el.cureTypeGuidance.textContent = 'Cure #2 suits a long hang of 6+ weeks at cellar temperature.';
+    }
+
+    el.cureTypeWarning.innerHTML = '';
+    if (state.cureType === '1' && state.hangWeeks > 4) {
+      el.cureTypeWarning.innerHTML = '<div class="warning">You\'ve set a hang of ' + state.hangWeeks + ' weeks with Cure #1, which is meant for hangs under ~4 weeks. Consider Cure #2 for a hang this long, or refrigerate after 4 weeks.</div>';
+    }
+
+    // Cure quantities (batch total)
+    var cure = computeCure(totalKg);
+
+    el.csCureNum.textContent = state.cureType;
+    el.csAmount.textContent = round1(cure.curingSaltG).toFixed(1);
+    el.saltAmount.textContent = formatGrams(cure.saltG);
+    el.sugarAmount.textContent = formatGrams(cure.sugarG);
+    el.pepperAmount.textContent = formatGrams(cure.pepperG);
+    el.garlicAmount.textContent = cure.garlicCloves + (cure.garlicCloves === 1 ? ' clove' : ' cloves');
+
+    if (state.bay) {
+      el.bayRow.style.display = '';
+      el.bayAmount.textContent = cure.bayLeaves + (cure.bayLeaves === 1 ? ' leaf' : ' leaves');
+    } else {
+      el.bayRow.style.display = 'none';
+    }
+
+    if (state.paprika) {
+      var pap = computePaprika(totalKg);
+      el.paprikaNote.style.display = '';
+      el.paprikaGrams.textContent = pap.paprikaG;
+      el.paprikaGarlic.textContent = pap.garlicCloves;
+    } else {
+      el.paprikaNote.style.display = 'none';
+    }
+
+    // Per piece
+    if (pieces > 1 && totalKg > 0) {
+      el.perPieceBlock.style.display = '';
+      var perPieceKg = totalKg / pieces;
+      var pc = computeCure(perPieceKg);
+      el.ppCount.textContent = pieces;
+      el.ppWeight.textContent = perPieceKg < 1
+        ? round(perPieceKg * 1000) + ' g'
+        : round1(perPieceKg) + ' kg';
+      el.ppDetails.innerHTML =
+        'Salt ' + formatGrams(pc.saltG) +
+        ' &middot; Curing salt <strong>' + round1(pc.curingSaltG).toFixed(1) + ' g</strong>' +
+        ' &middot; Sugar ' + formatGrams(pc.sugarG) +
+        ' &middot; Pepper ' + formatGrams(pc.pepperG) +
+        ' &middot; Garlic ' + pc.garlicCloves + (pc.garlicCloves === 1 ? ' clove' : ' cloves') +
+        (state.bay ? (' &middot; Bay ' + pc.bayLeaves + (pc.bayLeaves === 1 ? ' leaf' : ' leaves')) : '');
+    } else {
+      el.perPieceBlock.style.display = 'none';
+    }
+
+    // Derived: cure days, weight targets
+    el.cureDays.textContent = cureDays + ' days';
+
+    var totalGrams = totalKg * 1000;
+    var loss15 = totalGrams * 0.85;
+    var loss20 = totalGrams * 0.80;
+    el.target15.textContent = formatGrams(loss15);
+    el.target20.textContent = formatGrams(loss20);
+
+    renderTimeline(cureDays);
+  }
+
+  // ---- Timeline ----
+  function buildSteps(cureDays) {
+    var steps = [];
+    var cursor = state.startDate;
+
+    // 1. Cure
+    steps.push({
+      id: 'cure',
+      title: 'Cure',
+      detail: 'Fridge 2–4°C, flip daily.',
+      days: cureDays
+    });
+
+    // 2. Rinse + equalise
+    steps.push({
+      id: 'rinse',
+      title: 'Rinse + equalise',
+      detail: 'Rinse cure off, pat dry, rest to let salt equalise through the meat.',
+      days: 2
+    });
+
+    // 3. Pellicle
+    steps.push({
+      id: 'pellicle',
+      title: 'Pellicle',
+      detail: 'Surface dry and tacky, uncovered in the fridge or a cool airy spot.',
+      days: 2
+    });
+
+    // 4. Cold smoke - 4 sessions, ~8 days total (8-12h each + 24h rest x3 + last session)
+    steps.push({
+      id: 'smoke',
+      title: 'Cold smoke',
+      detail: '4 sessions, 8–12 h each, 24 h rest between. Keep below 25°C, target 15–20°C.',
+      days: 8
+    });
+
+    // 5. Paprika coat (optional)
+    if (state.paprika) {
+      steps.push({
+        id: 'paprika',
+        title: 'Paprika coat',
+        detail: 'Coat with sweet paprika + garlic after smoking, before hanging.',
+        days: 1
+      });
+    }
+
+    // 6. Hang and dry
+    var hangDays = Math.max(1, state.hangWeeks) * 7;
+    steps.push({
+      id: 'hang',
+      title: 'Hang and dry',
+      detail: 'Cool airy spot, weigh periodically toward 15–20% weight loss.',
+      days: hangDays
+    });
+
+    // Compute dates
+    var result = [];
+    var start = cursor;
+    for (var i = 0; i < steps.length; i++) {
+      var s = steps[i];
+      var startDate = start;
+      var endDate = addDays(toISO(startDate), s.days);
+      result.push({
+        id: s.id,
+        title: s.title,
+        detail: s.detail,
+        start: startDate,
+        end: endDate
+      });
+      start = toISO(endDate);
+    }
+
+    // 7. Ready date = end of last step
+    result.push({
+      id: 'ready',
+      title: 'Ready',
+      detail: 'Slanina is ready. Slice thin and enjoy.',
+      start: start instanceof Date ? start : addDays(start, 0),
+      end: null,
+      isMilestone: true
+    });
+
+    return result;
+  }
+
+  function toISO(d) {
+    if (typeof d === 'string') return d;
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + day;
+  }
+
+  function renderTimeline(cureDays) {
+    var steps = buildSteps(cureDays);
+    el.timelineList.innerHTML = '';
+
+    steps.forEach(function (step) {
+      var li = document.createElement('li');
+      var startD = step.start instanceof Date ? step.start : new Date(step.start + 'T00:00:00');
+      var isDone = !!state.stepDone[step.id];
+
+      var dateLabel;
+      if (step.isMilestone) {
+        dateLabel = formatDate(startD);
+      } else {
+        var endD = step.end;
+        dateLabel = formatDateShort(startD) + ' → ' + formatDate(endD);
+      }
+
+      li.className = isDone ? 'done' : '';
+      li.innerHTML =
+        '<div class="step-card ' + (isDone ? 'done' : '') + '">' +
+          '<div class="step-top">' +
+            '<input type="checkbox" data-step="' + step.id + '" ' + (isDone ? 'checked' : '') + '>' +
+            '<div>' +
+              '<div class="step-dates">' + dateLabel + '</div>' +
+              '<div class="step-title">' + step.title + '</div>' +
+              '<div class="step-detail">' + step.detail + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      el.timelineList.appendChild(li);
+    });
+
+    // Wire checkboxes
+    el.timelineList.querySelectorAll('input[type="checkbox"]').forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        var id = cb.getAttribute('data-step');
+        state.stepDone[id] = cb.checked;
+        renderTimeline(cureDays);
+      });
+    });
+  }
+
+  // ---- Event wiring ----
+  el.unitG.addEventListener('click', function () {
+    if (state.weightUnit === 'g') return;
+    var v = parseFloat(el.weightInput.value) || 0;
+    el.weightInput.value = round1(v * 1000);
+    state.weightUnit = 'g';
+    updateUnitButtons();
+    render();
+  });
+  el.unitKg.addEventListener('click', function () {
+    if (state.weightUnit === 'kg') return;
+    var v = parseFloat(el.weightInput.value) || 0;
+    el.weightInput.value = round1(v / 1000);
+    state.weightUnit = 'kg';
+    updateUnitButtons();
+    render();
+  });
+
+  el.weightInput.addEventListener('input', render);
+  el.thicknessInput.addEventListener('input', render);
+
+  el.piecesInput.addEventListener('input', render);
+  el.piecesDec.addEventListener('click', function () {
+    var v = parseInt(el.piecesInput.value, 10) || 1;
+    el.piecesInput.value = Math.max(1, v - 1);
+    render();
+  });
+  el.piecesInc.addEventListener('click', function () {
+    var v = parseInt(el.piecesInput.value, 10) || 1;
+    el.piecesInput.value = v + 1;
+    render();
+  });
+
+  el.cureTypeGroup.addEventListener('click', function (e) {
+    var opt = e.target.closest('.radio-option');
+    if (!opt) return;
+    state.cureType = opt.getAttribute('data-value');
+    updateCureTypeUI();
+    render();
+  });
+
+  el.startDateInput.addEventListener('change', function () {
+    state.startDate = el.startDateInput.value || todayISO();
+    render();
+  });
+
+  el.bayCheck.addEventListener('change', function () {
+    state.bay = el.bayCheck.checked;
+    updateCheckUI();
+    render();
+  });
+  el.paprikaCheck.addEventListener('change', function () {
+    state.paprika = el.paprikaCheck.checked;
+    updateCheckUI();
+    render();
+  });
+  el.bayCheck.closest('.check-option').addEventListener('click', function (e) {
+    if (e.target.tagName !== 'INPUT') {
+      el.bayCheck.checked = !el.bayCheck.checked;
+      el.bayCheck.dispatchEvent(new Event('change'));
+    }
+  });
+  el.paprikaCheck.closest('.check-option').addEventListener('click', function (e) {
+    if (e.target.tagName !== 'INPUT') {
+      el.paprikaCheck.checked = !el.paprikaCheck.checked;
+      el.paprikaCheck.dispatchEvent(new Event('change'));
+    }
+  });
+
+  el.hangWeeksInput.addEventListener('input', function () {
+    var v = parseInt(el.hangWeeksInput.value, 10);
+    state.hangWeeks = isNaN(v) || v < 1 ? 1 : v;
+    render();
+  });
+  el.hangDec.addEventListener('click', function () {
+    state.hangWeeks = Math.max(1, state.hangWeeks - 1);
+    el.hangWeeksInput.value = state.hangWeeks;
+    render();
+  });
+  el.hangInc.addEventListener('click', function () {
+    state.hangWeeks = state.hangWeeks + 1;
+    el.hangWeeksInput.value = state.hangWeeks;
+    render();
+  });
+
+  el.printBtn.addEventListener('click', function () {
+    window.print();
+  });
+
+  // ---- Init ----
+  updateUnitButtons();
+  updateCureTypeUI();
+  updateCheckUI();
+  render();
+})();
+</script>
+
+</body>
+</html>

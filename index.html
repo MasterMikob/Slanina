@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-AU">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -16,6 +16,13 @@
     --danger-bg: #fff2ee;
     --danger-border: #a8391f;
     --ok: #4b6b3a;
+    --font-serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', serif;
+  }
+
+  /* Georgia's Cyrillic coverage is inconsistent across platforms; lead with
+     serifs that definitely carry Cyrillic so Serbian never drops to sans. */
+  html[lang="sr-Cyrl"] {
+    --font-serif: 'PT Serif', 'Noto Serif', 'Charis SIL', 'DejaVu Serif', 'Liberation Serif', 'Times New Roman', Georgia, serif;
   }
 
   * { box-sizing: border-box; }
@@ -25,42 +32,123 @@
     padding: 0;
     background: var(--paper);
     color: var(--ink);
-    font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', serif;
+    font-family: var(--font-serif);
     -webkit-text-size-adjust: 100%;
   }
 
   body {
-    font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', serif;
+    font-family: var(--font-serif);
     font-size: 17px;
     line-height: 1.45;
     padding-bottom: 60px;
   }
 
   h1, h2, h3, legend {
-    font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+    font-family: var(--font-serif);
     color: var(--ink);
     margin: 0 0 0.4em 0;
   }
 
+  /* ---- Masthead + language selector ---- */
   header.masthead {
     background: var(--ink);
     color: var(--accent-ink);
-    padding: 22px 18px 18px;
+    padding: 18px 16px 16px;
     border-bottom: 6px solid var(--accent);
+  }
+  .masthead-inner {
+    max-width: 640px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .masthead-text {
+    flex: 1 1 auto;
+    min-width: 0;
   }
   header.masthead h1 {
     color: var(--accent-ink);
-    font-size: 1.7rem;
+    font-size: clamp(1.25rem, 5.4vw, 1.7rem);
     letter-spacing: 0.02em;
     margin-bottom: 2px;
+    overflow-wrap: break-word;
   }
   header.masthead p {
     margin: 0;
     color: #d9cdb5;
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+    overflow-wrap: break-word;
   }
+
+  .lang-select {
+    position: relative;
+    flex: 0 0 auto;
+  }
+  .lang-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 8px 12px;
+    background: rgba(255, 248, 236, 0.1);
+    border: 1px solid rgba(255, 248, 236, 0.35);
+    border-radius: 999px;
+    color: var(--accent-ink);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .lang-pill .lang-flag { font-size: 1.05rem; line-height: 1; }
+  .lang-pill .lang-caret { font-size: 0.6rem; opacity: 0.8; }
+  .lang-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 40;
+    margin: 0;
+    padding: 4px;
+    list-style: none;
+    min-width: 210px;
+    background: #fffdf8;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    box-shadow: 0 6px 18px rgba(42, 33, 24, 0.28);
+  }
+  .lang-menu[hidden] { display: none; }
+  .lang-menu li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 12px;
+    min-height: 44px;
+    border-radius: 3px;
+    color: var(--ink);
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  .lang-menu li .lang-flag { font-size: 1.15rem; line-height: 1; }
+  .lang-menu li[aria-selected="true"] {
+    background: #fdf3ec;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .lang-notice {
+    max-width: 640px;
+    margin: 12px auto 0;
+    padding: 8px 12px;
+    background: #fff6e0;
+    border: 1px solid #c9a227;
+    border-radius: 3px;
+    color: #5a4a10;
+    font-size: 0.85rem;
+  }
+  .lang-notice[hidden] { display: none; }
 
   main {
     max-width: 640px;
@@ -83,9 +171,7 @@
     margin-bottom: 14px;
   }
 
-  .field {
-    margin-bottom: 16px;
-  }
+  .field { margin-bottom: 16px; }
   .field:last-child { margin-bottom: 0; }
 
   label.field-label {
@@ -96,6 +182,7 @@
     margin-bottom: 6px;
     text-transform: uppercase;
     letter-spacing: 0.03em;
+    overflow-wrap: break-word;
   }
 
   input[type="number"],
@@ -137,6 +224,7 @@
     color: var(--ink-soft);
     cursor: pointer;
     border-left: 1px solid var(--rule);
+    font-family: inherit;
   }
   .toggle-group button:first-child { border-left: none; }
   .toggle-group button.active {
@@ -166,15 +254,22 @@
     accent-color: var(--accent);
     flex-shrink: 0;
   }
+  .radio-option .opt-text { min-width: 0; }
   .radio-option .opt-text strong {
     display: block;
     font-size: 1rem;
+    overflow-wrap: break-word;
   }
-  .radio-option .opt-text span {
+  .radio-option .opt-text .opt-sub {
+    font-weight: 400;
+    color: var(--ink-soft);
+  }
+  .radio-option .opt-text span.opt-desc {
     display: block;
     font-size: 0.85rem;
     color: var(--ink-soft);
     margin-top: 2px;
+    overflow-wrap: break-word;
   }
   .radio-option.selected {
     border-color: var(--accent);
@@ -185,7 +280,8 @@
     font-size: 0.88rem;
     color: var(--ink-soft);
     line-height: 1.5;
-    margin-bottom: 12px;
+    margin: 0 0 12px 0;
+    overflow-wrap: break-word;
   }
   .help-text:last-child { margin-bottom: 0; }
 
@@ -194,13 +290,17 @@
     gap: 8px;
     margin-bottom: 10px;
   }
+  .preset-grid.wrap { flex-wrap: wrap; }
+  .preset-grid.wrap button { flex: 1 1 44%; }
   .preset-grid button {
     flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 3px;
-    padding: 10px 4px;
+    padding: 10px 5px;
     border: 1px solid var(--rule);
     border-radius: 3px;
     background: #fffdf8;
@@ -208,15 +308,20 @@
     cursor: pointer;
     font-family: inherit;
     line-height: 1.25;
+    text-align: center;
   }
   .preset-grid button strong {
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     color: var(--ink);
+    overflow-wrap: break-word;
+    hyphens: auto;
   }
   .preset-grid button small {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
     letter-spacing: 0.02em;
+    overflow-wrap: break-word;
+    hyphens: auto;
   }
   .preset-grid button.active {
     border-color: var(--accent);
@@ -238,14 +343,6 @@
     margin-bottom: 8px;
     font-variant-numeric: tabular-nums;
   }
-  .slider-readout small {
-    display: block;
-    font-size: 0.72rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    color: var(--ink-soft);
-  }
 
   .stepper {
     display: flex;
@@ -255,16 +352,19 @@
   .stepper button {
     width: 46px;
     height: 46px;
+    flex: 0 0 46px;
     font-size: 1.4rem;
     border: 1px solid var(--rule);
     border-radius: 3px;
     background: #fffdf8;
     color: var(--ink);
     cursor: pointer;
+    font-family: inherit;
   }
   .stepper input {
     text-align: center;
     flex: 1;
+    min-width: 0;
   }
 
   .warning {
@@ -276,6 +376,7 @@
     border-radius: 3px;
     font-size: 0.9rem;
     color: #5a4a10;
+    overflow-wrap: break-word;
   }
   .note {
     margin-top: 10px;
@@ -285,17 +386,28 @@
     border-radius: 3px;
     font-size: 0.9rem;
     color: #33421f;
+    overflow-wrap: break-word;
+  }
+  .note[hidden], .warning[hidden] { display: none; }
+
+  /* Substitution note carries safety weight — give it the accent treatment. */
+  .note.substitution {
+    background: var(--danger-bg);
+    border-left-color: var(--danger-border);
+    color: #5c2214;
   }
 
-  /* Results */
+  /* ---- Results ---- */
   .cure-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 1rem;
+    table-layout: fixed;
   }
   .cure-table td {
     padding: 10px 4px;
     border-bottom: 1px solid var(--rule);
+    overflow-wrap: break-word;
   }
   .cure-table td.amt {
     text-align: right;
@@ -303,6 +415,7 @@
     font-weight: 700;
     font-size: 1.1rem;
     white-space: nowrap;
+    width: 38%;
   }
   .cure-table tr:last-child td { border-bottom: none; }
 
@@ -319,20 +432,40 @@
     font-size: 0.85rem;
     letter-spacing: 0.03em;
     color: var(--danger-border);
+    overflow-wrap: break-word;
+  }
+  .curing-salt-box .product-line {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin-top: 3px;
+    overflow-wrap: break-word;
   }
   .curing-salt-box .amount {
     font-size: 2.1rem;
     font-weight: 800;
-    font-family: Georgia, serif;
     color: var(--ink);
-    margin: 4px 0;
+    margin: 6px 0 0;
     font-variant-numeric: tabular-nums;
+    line-height: 1.15;
+  }
+  .curing-salt-box .ppm {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
   }
   .curing-salt-box .caveat {
     font-size: 0.88rem;
     font-weight: 700;
     color: var(--danger-border);
+    overflow-wrap: break-word;
   }
+  .curing-salt-box .cs-error {
+    font-size: 0.9rem;
+    color: #5c2214;
+    margin: 6px 0;
+    overflow-wrap: break-word;
+  }
+  .curing-salt-box [hidden] { display: none; }
 
   .per-piece {
     margin-top: 14px;
@@ -340,6 +473,7 @@
     border-top: 1px dashed var(--rule);
     font-size: 0.92rem;
     color: var(--ink-soft);
+    overflow-wrap: break-word;
   }
   .per-piece strong { color: var(--ink); }
 
@@ -349,17 +483,19 @@
   }
   .weight-loss-grid .wl-card {
     flex: 1;
+    min-width: 0;
     background: #fffdf8;
     border: 1px solid var(--rule);
     border-radius: 3px;
-    padding: 10px;
+    padding: 10px 6px;
     text-align: center;
   }
   .weight-loss-grid .wl-card .pct {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     text-transform: uppercase;
     color: var(--ink-soft);
     letter-spacing: 0.03em;
+    overflow-wrap: break-word;
   }
   .weight-loss-grid .wl-card .val {
     font-size: 1.3rem;
@@ -367,86 +503,124 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Timeline */
+  /* ---- Timeline ----
+     Marker geometry is derived from the same custom properties the card uses,
+     so the ring stays centred on the checkbox if padding or type size change. */
   .timeline {
+    --card-border: 1px;
+    --card-pad-top: 12px;
+    --checkbox-size: 24px;
+    --marker-size: 16px;
+    --marker-border: 4px;   /* even value: odd borders render lopsided at 3x */
+    --rail-width: 2px;
+    --marker-center: calc(var(--card-border) + var(--card-pad-top) + var(--checkbox-size) / 2);
     list-style: none;
     margin: 0;
     padding: 0;
-    border-left: 3px solid var(--accent);
-    margin-left: 10px;
   }
-  .timeline li {
+
+  .timeline-row {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    align-items: start;
+  }
+
+  .timeline-marker-col {
     position: relative;
-    padding: 4px 0 20px 22px;
+    align-self: stretch;
+    display: flex;
+    justify-content: center;
   }
-  .timeline li:last-child { padding-bottom: 4px; }
-  .timeline li::before {
+
+  /* Rail sits behind the ring so the ring's fill masks it. */
+  .timeline-marker-col::before {
     content: "";
     position: absolute;
-    left: -9px;
-    top: 6px;
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background: var(--paper-dark);
-    border: 3px solid var(--accent);
-  }
-  .timeline li.done::before {
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    bottom: 0;
+    width: var(--rail-width);
     background: var(--accent);
+    z-index: 0;
   }
+  .timeline-row:first-child .timeline-marker-col::before { top: var(--marker-center); }
+  .timeline-row:last-child .timeline-marker-col::before { bottom: calc(100% - var(--marker-center)); }
+
+  .timeline-marker {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    width: var(--marker-size);
+    height: var(--marker-size);
+    border-radius: 50%;
+    border: var(--marker-border) solid var(--accent);
+    background: var(--paper-dark);
+    margin-top: calc(var(--card-border) + var(--card-pad-top) + (var(--checkbox-size) - var(--marker-size)) / 2);
+  }
+  .timeline-row.done .timeline-marker { background: var(--accent); }
+
   .step-card {
     background: #fffdf8;
-    border: 1px solid var(--rule);
+    border: var(--card-border) solid var(--rule);
     border-radius: 3px;
-    padding: 10px 12px;
+    padding: var(--card-pad-top) 12px 12px;
+    margin-bottom: 16px;
+    min-width: 0;
   }
+  .timeline-row:last-child .step-card { margin-bottom: 0; }
   .step-card .step-top {
     display: flex;
     align-items: flex-start;
     gap: 10px;
   }
   .step-card input[type="checkbox"] {
-    width: 24px;
-    height: 24px;
-    margin-top: 2px;
+    width: var(--checkbox-size);
+    height: var(--checkbox-size);
+    margin: 0;
     accent-color: var(--accent);
-    flex-shrink: 0;
+    flex: 0 0 auto;
     cursor: pointer;
   }
+  .step-card .step-body { min-width: 0; }
   .step-card .step-dates {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: var(--accent);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.03em;
+    overflow-wrap: break-word;
   }
   .step-card .step-title {
     font-weight: 700;
     font-size: 1.02rem;
     margin: 2px 0 3px;
+    overflow-wrap: break-word;
   }
   .step-card .step-detail {
     font-size: 0.88rem;
     color: var(--ink-soft);
+    overflow-wrap: break-word;
   }
   .step-card.done { opacity: 0.6; }
   .step-card.done .step-title { text-decoration: line-through; }
 
-  /* Adjustable hang weeks */
   .hang-adjust {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
   }
   .hang-adjust label {
     font-size: 0.9rem;
     color: var(--ink-soft);
     font-weight: 600;
+    flex: 1 1 120px;
   }
-  .hang-adjust .stepper { max-width: 180px; }
+  .hang-adjust .stepper { flex: 0 0 auto; width: 170px; }
 
-  /* Reference / collapsible */
+  /* ---- Reference ---- */
   details.reference {
     background: var(--paper-dark);
     border: 1px solid var(--rule);
@@ -457,7 +631,6 @@
   details.reference summary {
     padding: 12px 0;
     font-weight: 700;
-    font-family: Georgia, serif;
     font-size: 1.1rem;
     cursor: pointer;
   }
@@ -469,6 +642,7 @@
     margin-bottom: 10px;
     font-size: 0.92rem;
     line-height: 1.5;
+    overflow-wrap: break-word;
   }
   details.reference h3 {
     font-size: 0.95rem;
@@ -482,9 +656,7 @@
     padding: 10px 16px 30px;
   }
 
-  .print-only-unit {
-    display: none;
-  }
+  .print-only-unit { display: none; }
 
   .print-btn {
     display: block;
@@ -498,15 +670,17 @@
     font-weight: 700;
     cursor: pointer;
     margin-bottom: 16px;
+    font-family: inherit;
   }
 
-  /* Print stylesheet */
+  /* ---- Print ---- */
   @media print {
     header.masthead { background: none; color: var(--ink); border-bottom: 2px solid var(--ink); }
     header.masthead h1, header.masthead p { color: var(--ink); }
     body { font-size: 12pt; padding-bottom: 0; }
-    .print-btn, .hang-adjust .stepper button, details.reference summary::-webkit-details-marker { display: none; }
+    .print-btn, details.reference summary::-webkit-details-marker { display: none; }
     button { display: none !important; }
+    .lang-select, .lang-notice { display: none !important; }
     .toggle-group { display: none; }
     .preset-grid { display: none; }
     input[type="range"] { display: none; }
@@ -522,50 +696,67 @@
     .stepper input { border: none; }
     section.sheet { break-inside: avoid; border: 1px solid #999; background: #fff; }
     .curing-salt-box { background: #fff; border: 2px solid #000; }
-    .timeline { border-left: 2px solid #000; }
-    .timeline li::before { border-color: #000; background: #fff; }
-    .timeline li.done::before { background: #000; }
+    .timeline-marker-col::before { background: #000; }
+    .timeline-marker { border-color: #000; background: #fff; }
+    .timeline-row.done .timeline-marker { background: #000; }
+    .timeline-row { break-inside: avoid; }
     input[type="number"], input[type="date"] { border: 1px solid #999; }
     details.reference { break-inside: avoid; }
     details.reference[open] summary { margin-bottom: 6px; }
     a { text-decoration: none; color: inherit; }
-    .stepper button { visibility: hidden; }
   }
 </style>
 </head>
 <body>
 
 <header class="masthead">
-  <h1>Slanina Calculator</h1>
-  <p>Curing worksheet &middot; Serbian-style cold-smoked pork belly</p>
+  <div class="masthead-inner">
+    <div class="masthead-text">
+      <h1 data-i18n="app.title">Slanina Calculator</h1>
+      <p data-i18n="app.subtitle">Curing worksheet · Serbian-style cold-smoked pork belly</p>
+    </div>
+    <div class="lang-select">
+      <button type="button" class="lang-pill" id="lang-pill" aria-haspopup="listbox" aria-expanded="false">
+        <span class="lang-flag" id="lang-pill-flag">🇦🇺</span>
+        <span id="lang-pill-label">EN</span>
+        <span class="lang-caret">▼</span>
+      </button>
+      <ul class="lang-menu" id="lang-menu" role="listbox" hidden>
+        <li role="option" data-locale="en-AU" aria-selected="true"><span class="lang-flag">🇦🇺</span> English</li>
+        <li role="option" data-locale="sr-Cyrl" aria-selected="false"><span class="lang-flag">🇷🇸</span> Српски</li>
+        <li role="option" data-locale="de-AT" aria-selected="false"><span class="lang-flag">🇦🇹</span> Deutsch (Österreich)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="lang-notice" id="lang-notice" hidden></div>
 </header>
 
 <main>
 
   <!-- INPUTS -->
   <section class="sheet" id="inputs-sheet">
-    <h2>The Meat</h2>
+    <h2 data-i18n="meat.heading">The Meat</h2>
 
     <div class="field">
-      <label class="field-label" for="weight-input">Meat weight</label>
+      <label class="field-label" for="weight-input" data-i18n="meat.weightLabel">Meat weight</label>
       <div class="row">
         <input type="number" id="weight-input" inputmode="decimal" min="0" step="0.01" value="2">
-        <div class="toggle-group" role="group" aria-label="Weight unit">
-          <button type="button" id="unit-g" data-unit="g">g</button>
-          <button type="button" id="unit-kg" data-unit="kg" class="active">kg</button>
+        <div class="toggle-group" role="group" id="unit-group">
+          <button type="button" id="unit-g" data-unit="g" data-i18n="meat.unitGrams">g</button>
+          <button type="button" id="unit-kg" data-unit="kg" class="active" data-i18n="meat.unitKilos">kg</button>
         </div>
         <span class="print-only-unit" id="print-unit">kg</span>
       </div>
     </div>
 
     <div class="field">
-      <label class="field-label" for="thickness-input">Slab thickness (cm)</label>
+      <label class="field-label" for="thickness-input" data-i18n="meat.thicknessLabel">Slab thickness (cm)</label>
       <input type="number" id="thickness-input" inputmode="decimal" min="0" step="0.1" value="4">
-      <div id="thickness-warning"></div>
+      <div class="warning" id="thickness-warning" hidden></div>
     </div>
 
     <div class="field">
-      <label class="field-label" for="pieces-input">Number of pieces</label>
+      <label class="field-label" for="pieces-input" data-i18n="meat.piecesLabel">Number of pieces</label>
       <div class="stepper">
         <button type="button" id="pieces-dec">&minus;</button>
         <input type="number" id="pieces-input" min="1" step="1" value="1" inputmode="numeric">
@@ -574,55 +765,83 @@
     </div>
 
     <div class="field">
-      <label class="field-label">Cure type</label>
+      <label class="field-label" data-i18n="meat.cureTypeLabel">Cure type</label>
       <div class="radio-group" id="cure-type-group">
         <label class="radio-option selected" data-value="1">
           <input type="radio" name="cure-type" value="1" checked>
           <span class="opt-text">
-            <strong>Cure #1</strong>
-            <span>Sodium nitrite &mdash; for a hang under ~4 weeks, then refrigerate.</span>
+            <strong data-i18n="meat.cure1Title">Cure #1</strong>
+            <span class="opt-desc" data-i18n="meat.cure1Desc"></span>
           </span>
         </label>
         <label class="radio-option" data-value="2">
           <input type="radio" name="cure-type" value="2">
           <span class="opt-text">
-            <strong>Cure #2</strong>
-            <span>Nitrite + nitrate &mdash; for a long hang of 6+ weeks at cellar temperature.</span>
+            <strong data-i18n="meat.cure2Title">Cure #2</strong>
+            <span class="opt-desc" data-i18n="meat.cure2Desc"></span>
           </span>
         </label>
       </div>
       <div id="cure-type-guidance" class="note"></div>
-      <div id="cure-type-warning"></div>
+      <div class="warning" id="cure-type-warning" hidden></div>
+    </div>
+
+    <!-- NITRITE STRENGTH -->
+    <div class="field">
+      <label class="field-label" data-i18n="nitrite.label">Curing salt — sodium nitrite content (%)</label>
+      <div class="preset-grid wrap" id="nitrite-preset-group">
+        <button type="button" data-pct="6.25">
+          <strong data-i18n="nitrite.presetPragueValue">6.25%</strong>
+          <small data-i18n="nitrite.presetPragueName"></small>
+        </button>
+        <button type="button" data-pct="0.6">
+          <strong data-i18n="nitrite.presetAtValue">0.6%</strong>
+          <small data-i18n="nitrite.presetAtName"></small>
+        </button>
+        <button type="button" data-pct="0.5">
+          <strong data-i18n="nitrite.presetDeValue">0.5%</strong>
+          <small data-i18n="nitrite.presetDeName"></small>
+        </button>
+        <button type="button" data-pct="custom">
+          <strong data-i18n="nitrite.presetCustomValue">Custom</strong>
+          <small data-i18n="nitrite.presetCustomName"></small>
+        </button>
+      </div>
+      <div id="nitrite-custom-wrap" hidden>
+        <label class="field-label" for="nitrite-custom-input" data-i18n="nitrite.customLabel"></label>
+        <input type="number" id="nitrite-custom-input" inputmode="decimal" min="0" max="100" step="0.01" value="6.25">
+      </div>
+      <p class="help-text" data-i18n="nitrite.help"></p>
     </div>
 
     <div class="field">
-      <label class="field-label" for="start-date-input">Start date</label>
+      <label class="field-label" for="start-date-input" data-i18n="meat.startDateLabel">Start date</label>
       <input type="date" id="start-date-input">
     </div>
 
     <div class="field">
-      <label class="field-label">Recipe / rub</label>
-      <p class="help-text">Three traditional variations, each building on the last. All use the same base cure above — the rub only changes what's added around it.</p>
+      <label class="field-label" data-i18n="recipe.heading">Recipe / rub</label>
+      <p class="help-text" data-i18n="recipe.help"></p>
       <div class="radio-group" id="rub-group">
         <label class="radio-option selected" data-value="plain">
           <input type="radio" name="rub" value="plain" checked>
           <span class="opt-text">
-            <strong>Domaća &mdash; Plain</strong>
-            <span>Just the base cure: salt, curing salt, sugar, pepper, garlic. The everyday farmhouse version that lets the pork speak for itself.</span>
+            <strong><span data-i18n="recipe.plainName">Domaća</span> <span class="opt-sub">&mdash; <span data-i18n="recipe.plainSubtitle"></span></span></strong>
+            <span class="opt-desc" data-i18n="recipe.plainDesc"></span>
           </span>
         </label>
         <label class="radio-option" data-value="bay">
           <input type="radio" name="rub" value="bay">
           <span class="opt-text">
-            <strong>Sa Lovorom &mdash; Bay Leaf</strong>
-            <span>Bay leaf goes into the cure alongside the base mix, for a subtle forest-cellar aroma. A classic countryside addition.</span>
+            <strong><span data-i18n="recipe.bayName">Sa Lovorom</span> <span class="opt-sub">&mdash; <span data-i18n="recipe.baySubtitle"></span></span></strong>
+            <span class="opt-desc" data-i18n="recipe.bayDesc"></span>
           </span>
         </label>
         <label class="radio-option" data-value="paprika">
           <input type="radio" name="rub" value="paprika">
           <span class="opt-text">
-            <strong>Sa Paprikom &mdash; Paprika-Crusted</strong>
-            <span>Bay leaf in the cure, then a sweet paprika and garlic crust rubbed on <em>after</em> smoking &mdash; the deep red finish you see hanging in village smokehouses. Decorative and flavour-only; it plays no role in preserving the meat.</span>
+            <strong><span data-i18n="recipe.paprikaName">Sa Paprikom</span> <span class="opt-sub">&mdash; <span data-i18n="recipe.paprikaSubtitle"></span></span></strong>
+            <span class="opt-desc" data-i18n-html="recipe.paprikaDesc"></span>
           </span>
         </label>
       </div>
@@ -631,69 +850,73 @@
 
   <!-- RESULTS -->
   <section class="sheet" id="results-sheet">
-    <h2>The Cure (per batch)</h2>
+    <h2 data-i18n="cure.heading">The Cure (per batch)</h2>
 
     <div class="curing-salt-box">
-      <div class="label">Curing salt (Cure #<span id="cs-cure-num">1</span>)</div>
-      <div class="amount"><span id="cs-amount">0.0</span> g</div>
-      <div class="caveat">Weigh on 0.1 g scales. Never estimate.</div>
+      <div class="label" data-i18n="cure.curingSaltLabel">Curing salt</div>
+      <div class="product-line" id="cs-product-line"></div>
+      <div class="amount" id="cs-amount-wrap"><span id="cs-amount">0.0</span></div>
+      <div class="ppm" id="cs-ppm"></div>
+      <div class="cs-error" id="cs-error" hidden></div>
+      <div class="caveat" data-i18n="cure.weighWarning">Weigh on 0.1 g scales. Never estimate.</div>
     </div>
+
+    <div class="note substitution" id="substitution-note" hidden></div>
 
     <table class="cure-table">
       <tbody>
-        <tr><td>Non-iodised salt</td><td class="amt" id="salt-amount">0 g</td></tr>
-        <tr><td>Sugar</td><td class="amt" id="sugar-amount">0 g</td></tr>
-        <tr><td>Cracked black pepper</td><td class="amt" id="pepper-amount">0 g</td></tr>
-        <tr><td>Garlic</td><td class="amt" id="garlic-amount">0 cloves</td></tr>
-        <tr id="bay-row" style="display:none"><td>Bay leaf</td><td class="amt" id="bay-amount">0 leaves</td></tr>
+        <tr><td id="salt-label" data-i18n="cure.saltLabel">Non-iodised salt</td><td class="amt" id="salt-amount">0 g</td></tr>
+        <tr><td data-i18n="cure.sugarLabel">Sugar</td><td class="amt" id="sugar-amount">0 g</td></tr>
+        <tr><td data-i18n="cure.pepperLabel">Cracked black pepper</td><td class="amt" id="pepper-amount">0 g</td></tr>
+        <tr><td data-i18n="cure.garlicLabel">Garlic</td><td class="amt" id="garlic-amount">0</td></tr>
+        <tr id="bay-row" hidden><td data-i18n="cure.bayLabel">Bay leaf</td><td class="amt" id="bay-amount">0</td></tr>
       </tbody>
     </table>
 
-    <div id="paprika-note" class="note" style="display:none">
-      <strong>After smoking:</strong> coat with <span id="paprika-grams">0</span> g sweet paprika + <span id="paprika-garlic">0</span> cloves garlic (per kg). Applied after smoking, not part of the cure mix.
-    </div>
+    <div id="paprika-note" class="note" hidden></div>
 
-    <div id="per-piece-block" class="per-piece" style="display:none">
-      <strong>Per piece</strong> (<span id="pp-count">1</span> pieces, <span id="pp-weight">0</span> each):<br>
+    <div id="per-piece-block" class="per-piece" hidden>
+      <strong data-i18n="cure.perPieceHeading">Per piece</strong>
+      <span id="pp-intro"></span><br>
       <span id="pp-details"></span>
     </div>
   </section>
 
   <section class="sheet" id="derived-sheet">
-    <h2>Timing &amp; Target</h2>
+    <h2 data-i18n="timing.heading">Timing &amp; Target</h2>
 
-    <p class="help-text">The cure needs time for salt to reach the centre of the slab evenly &mdash; thicker meat needs longer, which is why the number below comes from the thickness you entered, not a fixed rule.</p>
+    <p class="help-text" data-i18n="timing.intro"></p>
 
     <table class="cure-table">
       <tbody>
-        <tr><td>Cure days (from thickness)</td><td class="amt" id="cure-days">0 days</td></tr>
+        <tr><td data-i18n="timing.cureDaysLabel">Cure days (from thickness)</td><td class="amt" id="cure-days">0</td></tr>
       </tbody>
     </table>
 
-    <p class="help-text">Once it's cured, rinsed and smoked, the piece is hung to dry. <strong>The calendar can't tell you when it's actually done &mdash; weight can.</strong> Weigh the raw piece before curing, then weigh it again every few days while it hangs. It's ready to eat once it has lost this much of its original raw weight:</p>
+    <p class="help-text" data-i18n-html="timing.weightIntro"></p>
 
     <div class="weight-loss-grid">
       <div class="wl-card">
-        <div class="pct">15% loss</div>
+        <div class="pct" data-i18n="timing.loss15">15% loss</div>
         <div class="val" id="target-15">0</div>
       </div>
       <div class="wl-card">
-        <div class="pct">20% loss</div>
+        <div class="pct" data-i18n="timing.loss20">20% loss</div>
         <div class="val" id="target-20">0</div>
       </div>
     </div>
-    <p class="help-text">15% is a softer, earlier finish; 20% gives a firmer, more concentrated result. Anywhere between is safe to eat &mdash; it's a matter of taste, not a hard cutoff.</p>
+    <p class="help-text" data-i18n="timing.outro"></p>
   </section>
 
   <!-- SMOKING PLAN -->
   <section class="sheet" id="smoke-sheet">
-    <h2>Cold Smoke Plan</h2>
-    <p class="help-text">Maze smokers vary a lot &mdash; some fills burn out in 4&ndash;6 hours, others run past 20. Set how long <em>yours</em> actually lasts per fill and this works out how many sessions you need to reach a traditional total smoke exposure of around 32&ndash;48 hours.</p>
+    <h2 data-i18n="smoke.heading">Cold Smoke Plan</h2>
+    <p class="help-text" data-i18n-html="smoke.intro"></p>
 
     <div class="field">
-      <label class="field-label" for="smoke-hours-input">Smoker burn time per fill</label>
+      <label class="field-label" for="smoke-hours-input" data-i18n="smoke.burnLabel">Smoker burn time per fill</label>
       <input type="range" id="smoke-hours-input" min="4" max="24" step="1" value="10">
-      <div class="slider-readout"><span id="smoke-hours-value">10</span> h per fill</div>
+      <div class="slider-readout" id="smoke-hours-readout">10 h</div>
     </div>
 
     <div class="note" id="smoke-sessions-note"></div>
@@ -701,31 +924,31 @@
 
   <!-- TIMELINE -->
   <section class="sheet" id="timeline-sheet">
-    <h2>Batch Timeline</h2>
+    <h2 data-i18n="timeline.heading">Batch Timeline</h2>
 
-    <p class="help-text">This only sets the dates shown below &mdash; it doesn't change the cure itself. See Timing &amp; Target above for how to judge real doneness by weight, not by date.</p>
+    <p class="help-text" data-i18n="timeline.intro"></p>
 
     <div class="field">
-      <label class="field-label">Hang &amp; dry &mdash; flavour preset</label>
+      <label class="field-label" data-i18n="timeline.presetLabel">Hang &amp; dry — flavour preset</label>
       <div class="preset-grid" id="hang-preset-group">
         <button type="button" data-weeks="2">
-          <strong>Mild</strong>
-          <small>2 weeks</small>
+          <strong data-i18n="timeline.presetMild">Mild</strong>
+          <small class="preset-weeks" data-weeks-label="2"></small>
         </button>
         <button type="button" data-weeks="3" class="active">
-          <strong>Traditional</strong>
-          <small>3 weeks</small>
+          <strong data-i18n="timeline.presetTraditional">Traditional</strong>
+          <small class="preset-weeks" data-weeks-label="3"></small>
         </button>
         <button type="button" data-weeks="5">
-          <strong>Intense</strong>
-          <small>5 weeks</small>
+          <strong data-i18n="timeline.presetIntense">Intense</strong>
+          <small class="preset-weeks" data-weeks-label="5"></small>
         </button>
       </div>
-      <p class="help-text">Longer hangs lose more moisture, so the texture firms up and the flavour concentrates. Pick a preset or fine-tune below (1&ndash;12 weeks).</p>
+      <p class="help-text" data-i18n="timeline.presetHelp"></p>
     </div>
 
     <div class="hang-adjust">
-      <label for="hang-weeks-input">Hang &amp; dry (weeks)</label>
+      <label for="hang-weeks-input" data-i18n="timeline.hangLabel">Hang &amp; dry (weeks)</label>
       <div class="stepper">
         <button type="button" id="hang-dec">&minus;</button>
         <input type="number" id="hang-weeks-input" min="1" max="12" step="1" value="3" inputmode="numeric">
@@ -736,46 +959,238 @@
     <ul class="timeline" id="timeline-list"></ul>
   </section>
 
-  <button class="print-btn" id="print-btn">Print batch sheet</button>
+  <button class="print-btn" id="print-btn" data-i18n="app.printButton">Print batch sheet</button>
 
   <!-- REFERENCE -->
   <details class="reference">
-    <summary>Reference notes</summary>
-    <h3>Cold smoking</h3>
+    <summary data-i18n="reference.heading">Reference notes</summary>
+    <h3 data-i18n="reference.coldSmokeHeading">Cold smoking</h3>
     <ul>
-      <li>Keep smoke below 25&deg;C, target 15&ndash;20&deg;C. Above 25&deg;C the fat renders and you're in the bacterial danger zone.</li>
-      <li>Wood: beech, oak, apple, cherry. Never pine or eucalyptus.</li>
+      <li data-i18n="reference.coldSmoke1"></li>
+      <li data-i18n="reference.coldSmoke2"></li>
     </ul>
-    <h3>Signs of spoilage</h3>
+    <h3 data-i18n="reference.spoilageHeading">Signs of spoilage</h3>
     <ul>
-      <li>Discard the batch if it smells sour or ammoniac, is slimy, or grows fuzzy black/green mould.</li>
-      <li>A fine white bloom is normal.</li>
+      <li data-i18n="reference.spoilage1"></li>
+      <li data-i18n="reference.spoilage2"></li>
     </ul>
-    <h3>Curing salt safety</h3>
+    <h3 data-i18n="reference.safetyHeading">Curing salt safety</h3>
     <ul>
-      <li>Curing salt is toxic in quantity. Weigh it, never estimate.</li>
+      <li data-i18n="reference.safety1"></li>
+      <li data-i18n="reference.safety2"></li>
     </ul>
   </details>
 
 </main>
 
-<footer class="credit">Slanina Calculator &middot; equilibrium curing, offline worksheet</footer>
+<footer class="credit" data-i18n="app.footer">Slanina Calculator · equilibrium curing, offline worksheet</footer>
+
+<script>
+/* ------------------------------------------------------------------
+   Inline en-AU fallback pack.
+   Generated from i18n/en-AU.json by i18n/build.js — do not edit here.
+   Inlined so the app always renders translated text even offline, on
+   file://, or when a lazy-loaded pack fails.
+   ------------------------------------------------------------------ */
+/* i18n:inline:start */
+var EN_AU = {
+  "app": {
+    "htmlLang": "en-AU",
+    "bcp47": "en-AU",
+    "title": "Slanina Calculator",
+    "subtitle": "Curing worksheet · Serbian-style cold-smoked pork belly",
+    "printButton": "Print batch sheet",
+    "footer": "Slanina Calculator · equilibrium curing, offline worksheet",
+    "langPill": "EN",
+    "langMenuLabel": "Language",
+    "langLoadFailed": "Couldn't load that language pack — showing English instead."
+  },
+  "meat": {
+    "heading": "The Meat",
+    "weightLabel": "Meat weight",
+    "unitGrams": "g",
+    "unitKilos": "kg",
+    "unitAriaLabel": "Weight unit",
+    "thicknessLabel": "Slab thickness (cm)",
+    "piecesLabel": "Number of pieces",
+    "cureTypeLabel": "Cure type",
+    "startDateLabel": "Start date",
+    "cure1Title": "Cure #1",
+    "cure1Desc": "Sodium nitrite — for a hang under ~4 weeks, then refrigerate.",
+    "cure2Title": "Cure #2",
+    "cure2Desc": "Nitrite + nitrate — for a long hang of 6+ weeks at cellar temperature.",
+    "cure1Guidance": "Cure #1 suits a hang under ~4 weeks, then refrigerate the finished product.",
+    "cure2Guidance": "Cure #2 suits a long hang of 6+ weeks at cellar temperature."
+  },
+  "nitrite": {
+    "label": "Curing salt — sodium nitrite content (%)",
+    "help": "Read this off your own packet — it varies by country.",
+    "presetPragueValue": "6.25%",
+    "presetPragueName": "Prague Powder #1 / Cure #1 (US, AU)",
+    "presetAtValue": "0.6%",
+    "presetAtName": "Nitritpökelsalz (AT) / nitritna so (RS)",
+    "presetDeValue": "0.5%",
+    "presetDeName": "Nitritpökelsalz (DE)",
+    "presetCustomValue": "Custom",
+    "presetCustomName": "Enter your own",
+    "customLabel": "Sodium nitrite content (%)",
+    "productLine": "Prague Powder #1 / Nitritpökelsalz / нитритна со",
+    "productLineSuffix": "at {pct}% sodium nitrite",
+    "ppmReadout": "{ppm} ppm nitrite in the finished meat",
+    "ppmTarget": "target 156 ppm"
+  },
+  "cure": {
+    "heading": "The Cure (per batch)",
+    "curingSaltLabel": "Curing salt",
+    "weighWarning": "Weigh on 0.1 g scales. Never estimate.",
+    "saltLabel": "Non-iodised salt",
+    "saltLabelReduced": "Non-iodised salt (reduced)",
+    "sugarLabel": "Sugar",
+    "pepperLabel": "Cracked black pepper",
+    "garlicLabel": "Garlic",
+    "bayLabel": "Bay leaf",
+    "substitutionNote": "<strong>This curing salt replaces your plain salt, it does not add to it.</strong> At {pct}% nitrite the dose is {curing}, so the plain salt below has been cut to {salt} — the two together still come to the {target} total salt for this batch.",
+    "paprikaNote": "<strong>After smoking:</strong> coat with {paprika} sweet paprika + {garlic} (15 g paprika and 2 cloves per kg). Applied after smoking, not part of the cure mix.",
+    "perPieceHeading": "Per piece",
+    "perPieceIntro": "({pieces}, {weight} each):",
+    "ppSalt": "Salt",
+    "ppCuringSalt": "Curing salt",
+    "ppSugar": "Sugar",
+    "ppPepper": "Pepper",
+    "ppGarlic": "Garlic",
+    "ppBay": "Bay"
+  },
+  "recipe": {
+    "heading": "Recipe / rub",
+    "help": "Three traditional variations, each building on the last. All use the same base cure above — the rub only changes what's added around it.",
+    "plainName": "Domaća",
+    "plainSubtitle": "Plain",
+    "plainDesc": "Just the base cure: salt, curing salt, sugar, pepper, garlic. The everyday farmhouse version that lets the pork speak for itself.",
+    "bayName": "Sa Lovorom",
+    "baySubtitle": "Bay Leaf",
+    "bayDesc": "Bay leaf goes into the cure alongside the base mix, for a subtle forest-cellar aroma. A classic countryside addition.",
+    "paprikaName": "Sa Paprikom",
+    "paprikaSubtitle": "Paprika-Crusted",
+    "paprikaDesc": "Bay leaf in the cure, then a sweet paprika and garlic crust rubbed on <em>after</em> smoking — the deep red finish you see hanging in village smokehouses. Decorative and flavour-only; it plays no role in preserving the meat."
+  },
+  "timing": {
+    "heading": "Timing & Target",
+    "intro": "The cure needs time for salt to reach the centre of the slab evenly — thicker meat needs longer, which is why the number below comes from the thickness you entered, not a fixed rule.",
+    "cureDaysLabel": "Cure days (from thickness)",
+    "weightIntro": "Once it's cured, rinsed and smoked, the piece is hung to dry. <strong>The calendar can't tell you when it's actually done — weight can.</strong> Weigh the raw piece before curing, then weigh it again every few days while it hangs. It's ready to eat once it has lost this much of its original raw weight:",
+    "loss15": "15% loss",
+    "loss20": "20% loss",
+    "outro": "15% is a softer, earlier finish; 20% gives a firmer, more concentrated result. Anywhere between is safe to eat — it's a matter of taste, not a hard cutoff."
+  },
+  "smoke": {
+    "heading": "Cold Smoke Plan",
+    "intro": "Maze smokers vary a lot — some fills burn out in 4–6 hours, others run past 20. Set how long <em>yours</em> actually lasts per fill and this works out how many sessions you need to reach a traditional total smoke exposure of around 32–48 hours.",
+    "burnLabel": "Smoker burn time per fill",
+    "perFill": "{hours} h per fill",
+    "sessionsNote": "With fills lasting <strong>{hours} h</strong>, you'll need about <strong>{sessions}</strong> (~{total} h total smoke exposure), with 24 h rest between each."
+  },
+  "timeline": {
+    "heading": "Batch Timeline",
+    "intro": "This only sets the dates shown below — it doesn't change the cure itself. See Timing & Target above for how to judge real doneness by weight, not by date.",
+    "presetLabel": "Hang & dry — flavour preset",
+    "presetMild": "Mild",
+    "presetTraditional": "Traditional",
+    "presetIntense": "Intense",
+    "presetHelp": "Longer hangs lose more moisture, so the texture firms up and the flavour concentrates. Pick a preset or fine-tune below (1–12 weeks).",
+    "hangLabel": "Hang & dry (weeks)",
+    "cureTitle": "Cure",
+    "cureDetail": "Fridge 2–4°C, flip daily so the equilibrium cure reaches every surface evenly. Don't rush this — the salt is doing slow, precise work.",
+    "rinseTitle": "Rinse + equalise",
+    "rinseDetail": "Rinse the surface cure off under cold water, pat fully dry, then rest uncovered in the fridge so the absorbed salt spreads out evenly before smoking.",
+    "pellicleTitle": "Pellicle",
+    "pellicleDetail": "Leave uncovered in the fridge or a cool airy spot until the surface feels dry and slightly tacky, not wet. This skin (the pellicle) helps smoke cling to the meat.",
+    "smokeTitle": "Cold smoke",
+    "smokeDetail": "{sessions} at {hours} h each (your smoker's burn time), with 24 h rest between. Keep smoke below 25°C, target 15–20°C.",
+    "paprikaTitle": "Paprika coat",
+    "paprikaDetail": "Rub sweet paprika + garlic over the surface. Decorative and flavour-only — it plays no role in preserving the meat.",
+    "hangTitle": "Hang and dry",
+    "hangDetail": "Cool, airy spot (roughly 10–15°C, 60–70% humidity). Weigh every few days — it's ready once it has lost 15–20% of its original raw weight, not on a fixed date.",
+    "readyTitle": "Ready",
+    "readyDetail": "Estimated finish. Confirm by weight against the Timing & Target section before slicing — if it's not there yet, keep hanging and check again in a few days."
+  },
+  "warnings": {
+    "thinBelly": "Thin belly cures fast and dries to leather — 4–5 cm is ideal.",
+    "cureTypeMismatch": "You've set a hang of {weeks} with Cure #1, which is meant for hangs under ~4 weeks. Consider Cure #2 for a hang this long, or refrigerate after 4 weeks.",
+    "nitriteOverCap": "<strong>Blocked:</strong> that combination works out to {ppm} ppm nitrite, above the 200 ppm hard limit. Check the nitrite percentage on your packet — nothing is shown until it's in range.",
+    "saltBudgetExceeded": "<strong>This combination doesn't work.</strong> At {pct}% nitrite you'd need {needed} of curing salt to reach 156 ppm, but the whole batch only has a {target} salt budget. Either use a more concentrated curing salt (Prague Powder #1 at 6.25%), or accept a lower nitrite level — at this percentage the most you can reach within the salt budget is about {maxPpm} ppm.",
+    "nitriteInvalid": "Enter a nitrite percentage above 0 to calculate the curing salt.",
+    "batchTooSmall": "<strong>This batch is too small to dose safely.</strong> At {pct}% nitrite, {weight} of meat needs less curing salt than a 0.1 g scale can resolve, so there is no accurate dose to give you. Cure a larger batch, or use a more dilute curing salt."
+  },
+  "reference": {
+    "heading": "Reference notes",
+    "coldSmokeHeading": "Cold smoking",
+    "coldSmoke1": "Keep smoke below 25°C, target 15–20°C. Above 25°C the fat renders and you're in the bacterial danger zone.",
+    "coldSmoke2": "Wood: beech, oak, apple, cherry. Never pine or eucalyptus.",
+    "spoilageHeading": "Signs of spoilage",
+    "spoilage1": "Discard the batch if it smells sour or ammoniac, is slimy, or grows fuzzy black/green mould.",
+    "spoilage2": "A fine white bloom is normal.",
+    "safetyHeading": "Curing salt safety",
+    "safety1": "Curing salt is toxic in quantity. Weigh it, never estimate.",
+    "safety2": "Nitrite strength differs by country. Prague Powder #1 is 6.25% nitrite and is used at about 2.5 g/kg; Nitritpökelsalz and nitritna so are 0.5–0.6% and are used at about 25 g/kg in place of the plain salt. Never swap one dose for the other."
+  },
+  "units": {
+    "gram": "g",
+    "kilogram": "kg",
+    "hour": "h",
+    "percent": "%",
+    "days_one": "{n} day",
+    "days_few": "{n} days",
+    "days_other": "{n} days",
+    "weeks_one": "{n} week",
+    "weeks_few": "{n} weeks",
+    "weeks_other": "{n} weeks",
+    "sessions_one": "{n} session",
+    "sessions_few": "{n} sessions",
+    "sessions_other": "{n} sessions",
+    "cloves_one": "{n} clove",
+    "cloves_few": "{n} cloves",
+    "cloves_other": "{n} cloves",
+    "leaves_one": "{n} leaf",
+    "leaves_few": "{n} leaves",
+    "leaves_other": "{n} leaves",
+    "pieces_one": "{n} piece",
+    "pieces_few": "{n} pieces",
+    "pieces_other": "{n} pieces"
+  }
+};
+/* i18n:inline:end */
+</script>
 
 <script>
 (function () {
   'use strict';
 
-  // ---- In-memory state (no localStorage/sessionStorage) ----
+  // ---- Constants ----
   var HANG_WEEKS_MIN = 1;
   var HANG_WEEKS_MAX = 12;
   var SMOKE_HOURS_MIN = 4;
   var SMOKE_HOURS_MAX = 24;
-  var TARGET_SMOKE_HOURS = 40; // midpoint of the traditional 32-48h total smoke exposure
+  var TARGET_SMOKE_HOURS = 40;
 
+  // Curing salt safety constants.
+  var NITRITE_TARGET_PPM = 156;   // ingoing nitrite target in the finished meat
+  var NITRITE_MAX_PPM = 200;      // hard cap — nothing above this is ever shown
+  var SALT_TARGET_PER_KG = 25;    // 2.5% of raw meat weight
+  // Below this nitrite strength the product is a diluted salt (Nitritpökelsalz,
+  // nitritna so) used INSTEAD of the plain salt, not alongside it.
+  var SUBSTITUTION_THRESHOLD_PCT = 1;
+
+  var FALLBACK_LOCALE = 'en-AU';
+  var LOCALES = {
+    'en-AU': { flag: '🇦🇺', label: 'English' },
+    'sr-Cyrl': { flag: '🇷🇸', label: 'Српски' },
+    'de-AT': { flag: '🇦🇹', label: 'Deutsch (Österreich)' }
+  };
+  var LANG_STORAGE_KEY = 'slanina.locale';
+
+  // ---- In-memory batch state (deliberately NOT persisted) ----
   var state = {
-    weightValue: 2,
     weightUnit: 'kg',
-    thicknessCm: 4,
     pieces: 1,
     cureType: '1',
     startDate: todayISO(),
@@ -784,77 +1199,172 @@
     paprika: false,
     hangWeeks: 3,
     smokeHours: 10,
-    stepDone: {} // stepId -> bool
+    nitritePreset: '6.25',
+    nitritePct: 6.25,
+    stepDone: {}
   };
+
+  // ---- i18n plumbing ----
+  var packs = { 'en-AU': EN_AU };   // in-memory cache
+  var locale = FALLBACK_LOCALE;
+  var pluralRules = {};
 
   function todayISO() {
     var d = new Date();
-    var y = d.getFullYear();
-    var m = String(d.getMonth() + 1).padStart(2, '0');
-    var day = String(d.getDate()).padStart(2, '0');
-    return y + '-' + m + '-' + day;
+    return d.getFullYear() + '-' +
+      String(d.getMonth() + 1).padStart(2, '0') + '-' +
+      String(d.getDate()).padStart(2, '0');
+  }
+
+  function lookup(pack, key) {
+    if (!pack) return undefined;
+    var parts = key.split('.');
+    var cur = pack;
+    for (var i = 0; i < parts.length; i++) {
+      if (cur == null || typeof cur !== 'object') return undefined;
+      cur = cur[parts[i]];
+    }
+    return typeof cur === 'string' ? cur : undefined;
+  }
+
+  // Active locale -> en-AU -> the key itself, so gaps are visible in testing.
+  function t(key, vars) {
+    var s = lookup(packs[locale], key);
+    if (s === undefined) s = lookup(packs[FALLBACK_LOCALE], key);
+    if (s === undefined) return key;
+    if (vars) {
+      s = s.replace(/\{([a-zA-Z0-9_]+)\}/g, function (m, name) {
+        return Object.prototype.hasOwnProperty.call(vars, name) ? vars[name] : m;
+      });
+    }
+    return s;
+  }
+
+  function bcp47() {
+    return lookup(packs[locale], 'app.bcp47') || locale;
+  }
+
+  function pluralCategory(n) {
+    var tag = bcp47();
+    try {
+      if (!pluralRules[tag]) pluralRules[tag] = new Intl.PluralRules(tag);
+      return pluralRules[tag].select(n);
+    } catch (e) {
+      return n === 1 ? 'one' : 'other';
+    }
+  }
+
+  // Serbian needs one/few/other; English and German collapse few into other.
+  function plural(base, n) {
+    var cat = pluralCategory(n);
+    var key = 'units.' + base + '_' + cat;
+    if (lookup(packs[locale], key) === undefined &&
+        lookup(packs[FALLBACK_LOCALE], key) === undefined) {
+      key = 'units.' + base + '_other';
+    }
+    return t(key, { n: formatNumber(n, 0) });
+  }
+
+  function formatNumber(n, decimals) {
+    if (!isFinite(n)) return '—';
+    try {
+      return n.toLocaleString(bcp47(), {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    } catch (e) {
+      return n.toFixed(decimals);
+    }
+  }
+
+  function formatGrams(g, decimals) {
+    if (decimals === undefined) decimals = 0;
+    if (g >= 1000) return formatNumber(g / 1000, 2) + ' ' + t('units.kilogram');
+    return formatNumber(g, decimals) + ' ' + t('units.gram');
+  }
+
+  function formatDate(d) {
+    try {
+      return d.toLocaleDateString(bcp47(), {
+        weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+      });
+    } catch (e) { return d.toDateString(); }
+  }
+
+  function formatDateShort(d) {
+    try {
+      return d.toLocaleDateString(bcp47(), { day: 'numeric', month: 'short' });
+    } catch (e) { return d.toDateString(); }
+  }
+
+  // ---- Locale loading ----
+  // fetch() is blocked on file:// as a cross-origin request, so on that
+  // protocol the packs are pulled in as <script> tags instead. Same content.
+  function loadPack(code) {
+    if (packs[code]) return Promise.resolve(packs[code]);
+    if (location.protocol === 'file:') return loadPackViaScript(code);
+    return loadPackViaFetch(code);
+  }
+
+  function loadPackViaFetch(code) {
+    return fetch('i18n/' + code + '.json').then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    }).then(function (json) {
+      packs[code] = json;
+      return json;
+    });
+  }
+
+  function loadPackViaScript(code) {
+    return new Promise(function (resolve, reject) {
+      window.i18n = window.i18n || {};
+      if (window.i18n[code]) {
+        packs[code] = window.i18n[code];
+        return resolve(packs[code]);
+      }
+      var s = document.createElement('script');
+      s.src = 'i18n/' + code + '.js';
+      s.async = true;
+      s.onload = function () {
+        if (window.i18n && window.i18n[code]) {
+          packs[code] = window.i18n[code];
+          resolve(packs[code]);
+        } else {
+          reject(new Error('pack did not register'));
+        }
+      };
+      s.onerror = function () { reject(new Error('script load failed')); };
+      document.head.appendChild(s);
+    });
   }
 
   // ---- Element refs ----
-  var el = {
-    weightInput: document.getElementById('weight-input'),
-    unitG: document.getElementById('unit-g'),
-    unitKg: document.getElementById('unit-kg'),
-    thicknessInput: document.getElementById('thickness-input'),
-    thicknessWarning: document.getElementById('thickness-warning'),
-    piecesInput: document.getElementById('pieces-input'),
-    piecesDec: document.getElementById('pieces-dec'),
-    piecesInc: document.getElementById('pieces-inc'),
-    cureTypeGroup: document.getElementById('cure-type-group'),
-    cureTypeGuidance: document.getElementById('cure-type-guidance'),
-    cureTypeWarning: document.getElementById('cure-type-warning'),
-    startDateInput: document.getElementById('start-date-input'),
-    rubGroup: document.getElementById('rub-group'),
-
-    csCureNum: document.getElementById('cs-cure-num'),
-    csAmount: document.getElementById('cs-amount'),
-    saltAmount: document.getElementById('salt-amount'),
-    sugarAmount: document.getElementById('sugar-amount'),
-    pepperAmount: document.getElementById('pepper-amount'),
-    garlicAmount: document.getElementById('garlic-amount'),
-    bayRow: document.getElementById('bay-row'),
-    bayAmount: document.getElementById('bay-amount'),
-    paprikaNote: document.getElementById('paprika-note'),
-    paprikaGrams: document.getElementById('paprika-grams'),
-    paprikaGarlic: document.getElementById('paprika-garlic'),
-    perPieceBlock: document.getElementById('per-piece-block'),
-    ppCount: document.getElementById('pp-count'),
-    ppWeight: document.getElementById('pp-weight'),
-    ppDetails: document.getElementById('pp-details'),
-
-    cureDays: document.getElementById('cure-days'),
-    target15: document.getElementById('target-15'),
-    target20: document.getElementById('target-20'),
-
-    hangWeeksInput: document.getElementById('hang-weeks-input'),
-    hangDec: document.getElementById('hang-dec'),
-    hangInc: document.getElementById('hang-inc'),
-    hangPresetGroup: document.getElementById('hang-preset-group'),
-    timelineList: document.getElementById('timeline-list'),
-
-    smokeHoursInput: document.getElementById('smoke-hours-input'),
-    smokeHoursValue: document.getElementById('smoke-hours-value'),
-    smokeSessionsNote: document.getElementById('smoke-sessions-note'),
-
-    printBtn: document.getElementById('print-btn'),
-    printUnit: document.getElementById('print-unit')
-  };
+  var el = {};
+  [
+    'weight-input', 'unit-g', 'unit-kg', 'print-unit', 'thickness-input',
+    'thickness-warning', 'pieces-input', 'pieces-dec', 'pieces-inc',
+    'cure-type-group', 'cure-type-guidance', 'cure-type-warning',
+    'start-date-input', 'rub-group',
+    'nitrite-preset-group', 'nitrite-custom-wrap', 'nitrite-custom-input',
+    'cs-product-line', 'cs-amount', 'cs-amount-wrap', 'cs-ppm', 'cs-error',
+    'substitution-note', 'salt-label', 'salt-amount', 'sugar-amount',
+    'pepper-amount', 'garlic-amount', 'bay-row', 'bay-amount', 'paprika-note',
+    'per-piece-block', 'pp-intro', 'pp-details',
+    'cure-days', 'target-15', 'target-20',
+    'hang-weeks-input', 'hang-dec', 'hang-inc', 'hang-preset-group',
+    'timeline-list', 'smoke-hours-input', 'smoke-hours-readout',
+    'smoke-sessions-note', 'print-btn',
+    'lang-pill', 'lang-pill-flag', 'lang-pill-label', 'lang-menu', 'lang-notice'
+  ].forEach(function (id) {
+    el[id.replace(/-([a-z0-9])/g, function (m, c) { return c.toUpperCase(); })] =
+      document.getElementById(id);
+  });
 
   el.startDateInput.value = state.startDate;
 
-  // ---- Helpers ----
-  function round(n) { return Math.round(n); }
-  function round1(n) { return Math.round(n * 10) / 10; }
-
-  function formatGrams(g) {
-    if (g >= 1000) return (g / 1000).toFixed(g % 1000 === 0 ? 0 : 2) + ' kg';
-    return round(g) + ' g';
-  }
+  // ---- Maths helpers ----
+  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 
   function getWeightInKg() {
     var v = parseFloat(el.weightInput.value);
@@ -868,85 +1378,173 @@
     return d;
   }
 
-  function formatDate(d) {
-    var opts = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
-    return d.toLocaleDateString(undefined, opts);
+  function toISO(d) {
+    if (typeof d === 'string') return d;
+    return d.getFullYear() + '-' +
+      String(d.getMonth() + 1).padStart(2, '0') + '-' +
+      String(d.getDate()).padStart(2, '0');
   }
 
-  function formatDateShort(d) {
-    var opts = { day: 'numeric', month: 'short' };
-    return d.toLocaleDateString(undefined, opts);
+  /*
+   * Curing salt from the product's actual nitrite strength.
+   *
+   * A fixed 2.5 g/kg is only correct for 6.25% Prague Powder #1. European
+   * Nitritpökelsalz / nitritna so are 0.5-0.6% nitrite and are dosed around
+   * 25 g/kg in place of the plain salt. Dosing one at the other's rate is
+   * wrong by roughly a factor of ten in either direction, so the dose is
+   * always derived from the entered percentage.
+   */
+  function computeCuringSalt(kg, nitritePct) {
+    var result = {
+      ok: false, error: null, errorVars: null,
+      curingSaltG: 0, saltG: 0, ppm: 0, decimals: 1, substitutes: false
+    };
+
+    if (!(nitritePct > 0)) {
+      result.error = 'nitriteInvalid';
+      return result;
+    }
+
+    var saltTargetG = kg * SALT_TARGET_PER_KG;
+    var substitutes = nitritePct < SUBSTITUTION_THRESHOLD_PCT;
+    // 0.1 g precision is meaningful at 6.25%; at 0.5-0.6% the dose is 20 g+
+    // and that precision would be spurious.
+    var decimals = substitutes ? 0 : 1;
+
+    if (kg <= 0) {
+      result.ok = true;
+      result.decimals = decimals;
+      result.substitutes = substitutes;
+      return result;
+    }
+
+    // Grams of product needed to put NITRITE_TARGET_PPM into the meat.
+    var rawG = (kg * (NITRITE_TARGET_PPM / 1000)) / (nitritePct / 100);
+    var step = substitutes ? 1 : 0.1;
+    var curingSaltG = Math.round(rawG / step) * step;
+
+    // A dose that rounds to zero is not a valid cure — it would render as
+    // "0.0 g" and read like a real answer while delivering no nitrite at all.
+    if (curingSaltG <= 0) {
+      result.error = 'batchTooSmall';
+      result.errorVars = {
+        pct: formatNumber(nitritePct, 2),
+        weight: kg < 1 ? formatGrams(kg * 1000, 0) : formatGrams(kg * 1000, 0)
+      };
+      return result;
+    }
+
+    // ppm recomputed from the rounded dose so the readout matches what
+    // actually gets weighed out.
+    var ppm = (curingSaltG * (nitritePct / 100)) / kg * 1000;
+
+    // HARD CAP: nothing above 200 ppm is ever rendered.
+    if (ppm > NITRITE_MAX_PPM) {
+      result.error = 'nitriteOverCap';
+      result.errorVars = { ppm: formatNumber(ppm, 0) };
+      return result;
+    }
+
+    if (substitutes) {
+      if (curingSaltG > saltTargetG) {
+        // Can't reach the nitrite target inside the batch's salt budget.
+        var maxPpm = (saltTargetG * (nitritePct / 100)) / kg * 1000;
+        result.error = 'saltBudgetExceeded';
+        result.errorVars = {
+          pct: formatNumber(nitritePct, nitritePct < 1 ? 2 : 2),
+          needed: formatGrams(curingSaltG, 0),
+          target: formatGrams(saltTargetG, 0),
+          maxPpm: formatNumber(maxPpm, 0)
+        };
+        return result;
+      }
+      result.saltG = saltTargetG - curingSaltG;
+    } else {
+      result.saltG = saltTargetG;
+    }
+
+    result.ok = true;
+    result.curingSaltG = curingSaltG;
+    result.ppm = ppm;
+    result.decimals = decimals;
+    result.substitutes = substitutes;
+    result.saltTargetG = saltTargetG;
+    return result;
   }
 
-  // ---- Cure math ----
   function computeCure(kg) {
-    var saltG = kg * 25;
-    // HARD SAFETY CAP: curing salt must never exceed 2.5 g per kg of meat, regardless of inputs.
-    var CURING_SALT_MAX_PER_KG = 2.5;
-    var curingSaltG = Math.min(kg * 2.5, kg * CURING_SALT_MAX_PER_KG);
-    var sugarG = kg * 5;
-    var pepperG = kg * 3;
-    var garlicCloves = Math.round(kg * 3.5);
-    var bayLeaves = Math.ceil(kg * 1);
-
     return {
-      saltG: saltG,
-      curingSaltG: curingSaltG,
-      sugarG: sugarG,
-      pepperG: pepperG,
-      garlicCloves: garlicCloves,
-      bayLeaves: bayLeaves
+      sugarG: kg * 5,
+      pepperG: kg * 3,
+      garlicCloves: Math.round(kg * 3.5),
+      bayLeaves: Math.ceil(kg * 1)
     };
   }
 
   function computePaprika(kg) {
-    return {
-      paprikaG: round(kg * 15),
-      garlicCloves: round(kg * 2)
-    };
+    return { paprikaG: Math.round(kg * 15), garlicCloves: Math.round(kg * 2) };
   }
 
-  function clamp(v, min, max) {
-    return Math.max(min, Math.min(max, v));
-  }
-
-  // Sessions needed to reach the target total smoke exposure, given how long
-  // one fill of the user's smoker actually burns for.
   function computeSmokeSessions(hoursPerSession) {
     return Math.max(2, Math.ceil(TARGET_SMOKE_HOURS / hoursPerSession));
   }
 
-  // ---- Render inputs UI state ----
+  // ---- Static string application ----
+  function applyStaticStrings() {
+    document.querySelectorAll('[data-i18n]').forEach(function (node) {
+      node.textContent = t(node.getAttribute('data-i18n'));
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(function (node) {
+      node.innerHTML = t(node.getAttribute('data-i18n-html'));
+    });
+    document.querySelectorAll('.preset-weeks').forEach(function (node) {
+      node.textContent = plural('weeks', parseInt(node.getAttribute('data-weeks-label'), 10));
+    });
+    var unitGroup = document.getElementById('unit-group');
+    if (unitGroup) unitGroup.setAttribute('aria-label', t('meat.unitAriaLabel'));
+    el.langMenu.setAttribute('aria-label', t('app.langMenuLabel'));
+    el.langPill.setAttribute('aria-label', t('app.langMenuLabel'));
+    document.title = t('app.title');
+  }
+
+  // ---- UI sync ----
   function updateUnitButtons() {
     el.unitG.classList.toggle('active', state.weightUnit === 'g');
     el.unitKg.classList.toggle('active', state.weightUnit === 'kg');
-    el.printUnit.textContent = state.weightUnit;
+    el.printUnit.textContent = state.weightUnit === 'kg'
+      ? t('meat.unitKilos') : t('meat.unitGrams');
   }
 
-  function updateCureTypeUI() {
-    var options = el.cureTypeGroup.querySelectorAll('.radio-option');
-    options.forEach(function (opt) {
-      var isSel = opt.getAttribute('data-value') === state.cureType;
-      opt.classList.toggle('selected', isSel);
-      opt.querySelector('input').checked = isSel;
-    });
-  }
-
-  function updateRubUI() {
-    var options = el.rubGroup.querySelectorAll('.radio-option');
-    options.forEach(function (opt) {
-      var isSel = opt.getAttribute('data-value') === state.rub;
+  function updateRadioGroup(group, value) {
+    group.querySelectorAll('.radio-option').forEach(function (opt) {
+      var isSel = opt.getAttribute('data-value') === value;
       opt.classList.toggle('selected', isSel);
       opt.querySelector('input').checked = isSel;
     });
   }
 
   function updateHangPresetUI() {
-    var buttons = el.hangPresetGroup.querySelectorAll('button');
-    buttons.forEach(function (btn) {
-      var weeks = parseInt(btn.getAttribute('data-weeks'), 10);
-      btn.classList.toggle('active', weeks === state.hangWeeks);
+    el.hangPresetGroup.querySelectorAll('button').forEach(function (btn) {
+      btn.classList.toggle('active',
+        parseInt(btn.getAttribute('data-weeks'), 10) === state.hangWeeks);
     });
+  }
+
+  function updateNitritePresetUI() {
+    el.nitritePresetGroup.querySelectorAll('button').forEach(function (btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-pct') === state.nitritePreset);
+    });
+    el.nitriteCustomWrap.hidden = state.nitritePreset !== 'custom';
+  }
+
+  function updateLangUI() {
+    el.langPillFlag.textContent = LOCALES[locale].flag;
+    el.langPillLabel.textContent = t('app.langPill');
+    el.langMenu.querySelectorAll('li').forEach(function (li) {
+      li.setAttribute('aria-selected',
+        li.getAttribute('data-locale') === locale ? 'true' : 'false');
+    });
+    el.langPill.setAttribute('aria-expanded', el.langMenu.hidden ? 'false' : 'true');
   }
 
   // ---- Main render ----
@@ -957,173 +1555,171 @@
     var pieces = parseInt(el.piecesInput.value, 10);
     if (isNaN(pieces) || pieces < 1) pieces = 1;
 
-    // Thickness warning
-    el.thicknessWarning.innerHTML = '';
-    if (thickness > 0 && thickness < 3) {
-      el.thicknessWarning.innerHTML = '<div class="warning">Thin belly cures fast and dries to leather &mdash; 4&ndash;5 cm is ideal.</div>';
+    // Thin belly warning
+    var thin = thickness > 0 && thickness < 3;
+    el.thicknessWarning.hidden = !thin;
+    if (thin) el.thicknessWarning.textContent = t('warnings.thinBelly');
+
+    var cureDays = Math.max(7, Math.min(21, (thickness * 2) + 2));
+
+    // Cure type guidance + hang mismatch warning
+    el.cureTypeGuidance.textContent = state.cureType === '1'
+      ? t('meat.cure1Guidance') : t('meat.cure2Guidance');
+
+    var mismatch = state.cureType === '1' && state.hangWeeks > 4;
+    el.cureTypeWarning.hidden = !mismatch;
+    if (mismatch) {
+      el.cureTypeWarning.innerHTML = t('warnings.cureTypeMismatch', {
+        weeks: plural('weeks', state.hangWeeks)
+      });
     }
 
-    // Cure type guidance + warning
-    var cureDaysRaw = (thickness * 2) + 2;
-    var cureDays = Math.max(7, Math.min(21, cureDaysRaw));
-
-    if (state.cureType === '1') {
-      el.cureTypeGuidance.textContent = 'Cure #1 suits a hang under ~4 weeks, then refrigerate the finished product.';
-    } else {
-      el.cureTypeGuidance.textContent = 'Cure #2 suits a long hang of 6+ weeks at cellar temperature.';
-    }
-
-    el.cureTypeWarning.innerHTML = '';
-    if (state.cureType === '1' && state.hangWeeks > 4) {
-      el.cureTypeWarning.innerHTML = '<div class="warning">You\'ve set a hang of ' + state.hangWeeks + ' weeks with Cure #1, which is meant for hangs under ~4 weeks. Consider Cure #2 for a hang this long, or refrigerate after 4 weeks.</div>';
-    }
-
-    // Cure quantities (batch total)
+    // ---- Curing salt (safety critical) ----
+    var cs = computeCuringSalt(totalKg, state.nitritePct);
     var cure = computeCure(totalKg);
 
-    el.csCureNum.textContent = state.cureType;
-    el.csAmount.textContent = round1(cure.curingSaltG).toFixed(1);
-    el.saltAmount.textContent = formatGrams(cure.saltG);
-    el.sugarAmount.textContent = formatGrams(cure.sugarG);
-    el.pepperAmount.textContent = formatGrams(cure.pepperG);
-    el.garlicAmount.textContent = cure.garlicCloves + (cure.garlicCloves === 1 ? ' clove' : ' cloves');
+    el.csProductLine.textContent = t('nitrite.productLine') + ' — ' +
+      t('nitrite.productLineSuffix', { pct: formatNumber(state.nitritePct, 2) });
 
-    if (state.bay) {
-      el.bayRow.style.display = '';
-      el.bayAmount.textContent = cure.bayLeaves + (cure.bayLeaves === 1 ? ' leaf' : ' leaves');
+    if (cs.ok) {
+      el.csAmountWrap.hidden = false;
+      el.csPpm.hidden = false;
+      el.csError.hidden = true;
+      el.csAmount.textContent = formatGrams(cs.curingSaltG, cs.decimals);
+      el.csPpm.textContent = t('nitrite.ppmReadout', { ppm: formatNumber(cs.ppm, 0) }) +
+        ' · ' + t('nitrite.ppmTarget');
+      el.saltAmount.textContent = formatGrams(cs.saltG, 0);
     } else {
-      el.bayRow.style.display = 'none';
+      el.csAmountWrap.hidden = true;
+      el.csPpm.hidden = true;
+      el.csError.hidden = false;
+      el.csError.innerHTML = t('warnings.' + cs.error, cs.errorVars || {});
+      el.saltAmount.textContent = '—';
     }
 
+    // Substitution note — prominent, since it changes what goes in the bowl.
+    var showSub = cs.ok && cs.substitutes && totalKg > 0;
+    el.substitutionNote.hidden = !showSub;
+    el.saltLabel.textContent = showSub ? t('cure.saltLabelReduced') : t('cure.saltLabel');
+    if (showSub) {
+      el.substitutionNote.innerHTML = t('cure.substitutionNote', {
+        pct: formatNumber(state.nitritePct, 2),
+        curing: formatGrams(cs.curingSaltG, cs.decimals),
+        salt: formatGrams(cs.saltG, 0),
+        target: formatGrams(cs.saltTargetG, 0)
+      });
+    }
+
+    el.sugarAmount.textContent = formatGrams(cure.sugarG, 0);
+    el.pepperAmount.textContent = formatGrams(cure.pepperG, 0);
+    el.garlicAmount.textContent = plural('cloves', cure.garlicCloves);
+
+    el.bayRow.hidden = !state.bay;
+    if (state.bay) el.bayAmount.textContent = plural('leaves', cure.bayLeaves);
+
+    el.paprikaNote.hidden = !state.paprika;
     if (state.paprika) {
       var pap = computePaprika(totalKg);
-      el.paprikaNote.style.display = '';
-      el.paprikaGrams.textContent = pap.paprikaG;
-      el.paprikaGarlic.textContent = pap.garlicCloves;
-    } else {
-      el.paprikaNote.style.display = 'none';
+      el.paprikaNote.innerHTML = t('cure.paprikaNote', {
+        paprika: formatGrams(pap.paprikaG, 0),
+        garlic: plural('cloves', pap.garlicCloves)
+      });
     }
 
-    // Per piece
-    if (pieces > 1 && totalKg > 0) {
-      el.perPieceBlock.style.display = '';
+    // ---- Per piece ----
+    var showPerPiece = pieces > 1 && totalKg > 0;
+    el.perPieceBlock.hidden = !showPerPiece;
+    if (showPerPiece) {
       var perPieceKg = totalKg / pieces;
+      var pcCs = computeCuringSalt(perPieceKg, state.nitritePct);
       var pc = computeCure(perPieceKg);
-      el.ppCount.textContent = pieces;
-      el.ppWeight.textContent = perPieceKg < 1
-        ? round(perPieceKg * 1000) + ' g'
-        : round1(perPieceKg) + ' kg';
-      el.ppDetails.innerHTML =
-        'Salt ' + formatGrams(pc.saltG) +
-        ' &middot; Curing salt <strong>' + round1(pc.curingSaltG).toFixed(1) + ' g</strong>' +
-        ' &middot; Sugar ' + formatGrams(pc.sugarG) +
-        ' &middot; Pepper ' + formatGrams(pc.pepperG) +
-        ' &middot; Garlic ' + pc.garlicCloves + (pc.garlicCloves === 1 ? ' clove' : ' cloves') +
-        (state.bay ? (' &middot; Bay ' + pc.bayLeaves + (pc.bayLeaves === 1 ? ' leaf' : ' leaves')) : '');
-    } else {
-      el.perPieceBlock.style.display = 'none';
+      el.ppIntro.textContent = ' ' + t('cure.perPieceIntro', {
+        pieces: plural('pieces', pieces),
+        weight: perPieceKg < 1
+          ? formatGrams(perPieceKg * 1000, 0)
+          : formatNumber(perPieceKg, 1) + ' ' + t('units.kilogram')
+      });
+      var parts = [
+        t('cure.ppSalt') + ' ' + (pcCs.ok ? formatGrams(pcCs.saltG, 0) : '—'),
+        t('cure.ppCuringSalt') + ' <strong>' +
+          (pcCs.ok ? formatGrams(pcCs.curingSaltG, pcCs.decimals) : '—') + '</strong>',
+        t('cure.ppSugar') + ' ' + formatGrams(pc.sugarG, 0),
+        t('cure.ppPepper') + ' ' + formatGrams(pc.pepperG, 0),
+        t('cure.ppGarlic') + ' ' + plural('cloves', pc.garlicCloves)
+      ];
+      if (state.bay) parts.push(t('cure.ppBay') + ' ' + plural('leaves', pc.bayLeaves));
+      el.ppDetails.innerHTML = parts.join(' &middot; ');
     }
 
-    // Derived: cure days, weight targets
-    el.cureDays.textContent = cureDays + ' days';
-
+    // ---- Timing & target ----
+    el.cureDays.textContent = plural('days', cureDays);
     var totalGrams = totalKg * 1000;
-    var loss15 = totalGrams * 0.85;
-    var loss20 = totalGrams * 0.80;
-    el.target15.textContent = formatGrams(loss15);
-    el.target20.textContent = formatGrams(loss20);
+    el.target15.textContent = formatGrams(totalGrams * 0.85, 0);
+    el.target20.textContent = formatGrams(totalGrams * 0.80, 0);
 
-    // Smoking plan: work out sessions needed from the user's actual smoker burn time
+    // ---- Smoke plan ----
     var sessions = computeSmokeSessions(state.smokeHours);
-    var totalSmokeHours = sessions * state.smokeHours;
-    el.smokeSessionsNote.innerHTML =
-      'With fills lasting <strong>' + state.smokeHours + ' h</strong>, you\'ll need about ' +
-      '<strong>' + sessions + ' session' + (sessions === 1 ? '' : 's') + '</strong> ' +
-      '(~' + totalSmokeHours + ' h total smoke exposure), with 24 h rest between each.';
+    el.smokeHoursReadout.textContent = t('smoke.perFill', {
+      hours: formatNumber(state.smokeHours, 0)
+    });
+    el.smokeSessionsNote.innerHTML = t('smoke.sessionsNote', {
+      hours: formatNumber(state.smokeHours, 0),
+      sessions: plural('sessions', sessions),
+      total: formatNumber(sessions * state.smokeHours, 0)
+    });
 
     renderTimeline(cureDays, sessions, state.smokeHours);
   }
 
   // ---- Timeline ----
   function buildSteps(cureDays, smokeSessions, smokeHours) {
-    var steps = [];
-    var cursor = state.startDate;
+    var steps = [
+      { id: 'cure', title: t('timeline.cureTitle'), detail: t('timeline.cureDetail'), days: cureDays },
+      { id: 'rinse', title: t('timeline.rinseTitle'), detail: t('timeline.rinseDetail'), days: 2 },
+      { id: 'pellicle', title: t('timeline.pellicleTitle'), detail: t('timeline.pellicleDetail'), days: 2 },
+      {
+        id: 'smoke',
+        title: t('timeline.smokeTitle'),
+        detail: t('timeline.smokeDetail', {
+          sessions: plural('sessions', smokeSessions),
+          hours: formatNumber(smokeHours, 0)
+        }),
+        days: Math.max(1, smokeSessions * 2 - 1)
+      }
+    ];
 
-    // 1. Cure
-    steps.push({
-      id: 'cure',
-      title: 'Cure',
-      detail: 'Fridge 2–4°C, flip daily so the equilibrium cure reaches every surface evenly. Don\'t rush this — the salt is doing slow, precise work.',
-      days: cureDays
-    });
-
-    // 2. Rinse + equalise
-    steps.push({
-      id: 'rinse',
-      title: 'Rinse + equalise',
-      detail: 'Rinse the surface cure off under cold water, pat fully dry, then rest uncovered in the fridge so the absorbed salt spreads out evenly before smoking.',
-      days: 2
-    });
-
-    // 3. Pellicle
-    steps.push({
-      id: 'pellicle',
-      title: 'Pellicle',
-      detail: 'Leave uncovered in the fridge or a cool airy spot until the surface feels dry and slightly tacky, not wet. This skin (the pellicle) helps smoke cling to the meat.',
-      days: 2
-    });
-
-    // 4. Cold smoke - session count driven by the user's actual smoker burn time
-    var smokeDays = Math.max(1, smokeSessions * 2 - 1);
-    steps.push({
-      id: 'smoke',
-      title: 'Cold smoke',
-      detail: smokeSessions + ' session' + (smokeSessions === 1 ? '' : 's') + ' at ' + smokeHours + ' h each (your smoker\'s burn time), with 24 h rest between. Keep smoke below 25°C, target 15–20°C.',
-      days: smokeDays
-    });
-
-    // 5. Paprika coat (optional)
     if (state.paprika) {
       steps.push({
         id: 'paprika',
-        title: 'Paprika coat',
-        detail: 'Rub sweet paprika + garlic over the surface. Decorative and flavour-only — it plays no role in preserving the meat.',
+        title: t('timeline.paprikaTitle'),
+        detail: t('timeline.paprikaDetail'),
         days: 1
       });
     }
 
-    // 6. Hang and dry
-    var hangDays = Math.max(1, state.hangWeeks) * 7;
     steps.push({
       id: 'hang',
-      title: 'Hang and dry',
-      detail: 'Cool, airy spot (roughly 10–15°C, 60–70% humidity). Weigh every few days — it\'s ready once it has lost 15–20% of its original raw weight, not on a fixed date.',
-      days: hangDays
+      title: t('timeline.hangTitle'),
+      detail: t('timeline.hangDetail'),
+      days: Math.max(1, state.hangWeeks) * 7
     });
 
-    // Compute dates
     var result = [];
-    var start = cursor;
-    for (var i = 0; i < steps.length; i++) {
-      var s = steps[i];
-      var startDate = start;
-      var endDate = addDays(toISO(startDate), s.days);
+    var start = state.startDate;
+    steps.forEach(function (s) {
+      var endDate = addDays(toISO(start), s.days);
       result.push({
-        id: s.id,
-        title: s.title,
-        detail: s.detail,
-        start: startDate,
-        end: endDate
+        id: s.id, title: s.title, detail: s.detail,
+        start: start, end: endDate
       });
       start = toISO(endDate);
-    }
+    });
 
-    // 7. Ready date = end of last step (an estimate — confirm with the weight target above)
     result.push({
       id: 'ready',
-      title: 'Ready',
-      detail: 'Estimated finish. Confirm by weight against the Timing & Target section before slicing — if it\'s not there yet, keep hanging and check again in a few days.',
-      start: start instanceof Date ? start : addDays(start, 0),
+      title: t('timeline.readyTitle'),
+      detail: t('timeline.readyDetail'),
+      start: start,
       end: null,
       isMilestone: true
     });
@@ -1131,69 +1727,127 @@
     return result;
   }
 
-  function toISO(d) {
-    if (typeof d === 'string') return d;
-    var y = d.getFullYear();
-    var m = String(d.getMonth() + 1).padStart(2, '0');
-    var day = String(d.getDate()).padStart(2, '0');
-    return y + '-' + m + '-' + day;
-  }
-
   function renderTimeline(cureDays, smokeSessions, smokeHours) {
     var steps = buildSteps(cureDays, smokeSessions, smokeHours);
     el.timelineList.innerHTML = '';
 
     steps.forEach(function (step) {
-      var li = document.createElement('li');
-      var startD = step.start instanceof Date ? step.start : new Date(step.start + 'T00:00:00');
+      var startD = step.start instanceof Date
+        ? step.start : new Date(step.start + 'T00:00:00');
       var isDone = !!state.stepDone[step.id];
 
-      var dateLabel;
-      if (step.isMilestone) {
-        dateLabel = formatDate(startD);
-      } else {
-        var endD = step.end;
-        dateLabel = formatDateShort(startD) + ' → ' + formatDate(endD);
-      }
+      var dateLabel = step.isMilestone
+        ? formatDate(startD)
+        : formatDateShort(startD) + ' → ' + formatDate(step.end);
 
-      li.className = isDone ? 'done' : '';
+      var li = document.createElement('li');
+      li.className = 'timeline-row' + (isDone ? ' done' : '');
       li.innerHTML =
-        '<div class="step-card ' + (isDone ? 'done' : '') + '">' +
+        '<div class="timeline-marker-col"><span class="timeline-marker"></span></div>' +
+        '<div class="step-card' + (isDone ? ' done' : '') + '">' +
           '<div class="step-top">' +
-            '<input type="checkbox" data-step="' + step.id + '" ' + (isDone ? 'checked' : '') + '>' +
-            '<div>' +
+            '<input type="checkbox" data-step="' + step.id + '"' + (isDone ? ' checked' : '') + '>' +
+            '<div class="step-body">' +
               '<div class="step-dates">' + dateLabel + '</div>' +
-              '<div class="step-title">' + step.title + '</div>' +
-              '<div class="step-detail">' + step.detail + '</div>' +
+              '<div class="step-title"></div>' +
+              '<div class="step-detail"></div>' +
             '</div>' +
           '</div>' +
         '</div>';
+      // Titles and details come from translation data — set as text, not markup.
+      li.querySelector('.step-title').textContent = step.title;
+      li.querySelector('.step-detail').textContent = step.detail;
       el.timelineList.appendChild(li);
     });
 
-    // Wire checkboxes
     el.timelineList.querySelectorAll('input[type="checkbox"]').forEach(function (cb) {
       cb.addEventListener('change', function () {
-        var id = cb.getAttribute('data-step');
-        state.stepDone[id] = cb.checked;
+        state.stepDone[cb.getAttribute('data-step')] = cb.checked;
         renderTimeline(cureDays, smokeSessions, smokeHours);
       });
     });
   }
 
-  // ---- Event wiring ----
+  // ---- Language switching ----
+  function showLangNotice(msg) {
+    el.langNotice.textContent = msg;
+    el.langNotice.hidden = false;
+  }
+
+  function applyLocale(code) {
+    locale = code;
+    document.documentElement.lang = lookup(packs[code], 'app.htmlLang') || code;
+    applyStaticStrings();
+    updateLangUI();
+    updateUnitButtons();
+    render();
+  }
+
+  function setLocale(code) {
+    if (!LOCALES[code]) return;
+    el.langNotice.hidden = true;
+
+    if (packs[code]) {
+      applyLocale(code);
+      persistLocale(code);
+      return;
+    }
+
+    loadPack(code).then(function () {
+      applyLocale(code);
+      persistLocale(code);
+    }).catch(function () {
+      // Non-blocking: stay on / fall back to en-AU and say so.
+      applyLocale(FALLBACK_LOCALE);
+      persistLocale(FALLBACK_LOCALE);
+      showLangNotice(t('app.langLoadFailed'));
+    });
+  }
+
+  function persistLocale(code) {
+    try { localStorage.setItem(LANG_STORAGE_KEY, code); } catch (e) { /* private mode */ }
+  }
+
+  function restoreLocale() {
+    var saved = null;
+    try { saved = localStorage.getItem(LANG_STORAGE_KEY); } catch (e) { /* ignore */ }
+    if (saved && LOCALES[saved] && saved !== FALLBACK_LOCALE) setLocale(saved);
+  }
+
+  function closeLangMenu() {
+    el.langMenu.hidden = true;
+    el.langPill.setAttribute('aria-expanded', 'false');
+  }
+
+  // ---- Events ----
+  el.langPill.addEventListener('click', function (e) {
+    e.stopPropagation();
+    el.langMenu.hidden = !el.langMenu.hidden;
+    el.langPill.setAttribute('aria-expanded', el.langMenu.hidden ? 'false' : 'true');
+  });
+  el.langMenu.addEventListener('click', function (e) {
+    var li = e.target.closest('li[data-locale]');
+    if (!li) return;
+    closeLangMenu();
+    setLocale(li.getAttribute('data-locale'));
+  });
+  document.addEventListener('click', function (e) {
+    if (!el.langMenu.hidden && !e.target.closest('.lang-select')) closeLangMenu();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !el.langMenu.hidden) closeLangMenu();
+  });
+
   el.unitG.addEventListener('click', function () {
     if (state.weightUnit === 'g') return;
-    var v = parseFloat(el.weightInput.value) || 0;
-    el.weightInput.value = round1(v * 1000);
+    el.weightInput.value = Math.round((parseFloat(el.weightInput.value) || 0) * 1000 * 10) / 10;
     state.weightUnit = 'g';
     updateUnitButtons();
     render();
   });
   el.unitKg.addEventListener('click', function () {
     if (state.weightUnit === 'kg') return;
-    var v = parseFloat(el.weightInput.value) || 0;
-    el.weightInput.value = round1(v / 1000);
+    el.weightInput.value = Math.round((parseFloat(el.weightInput.value) || 0) / 1000 * 1000) / 1000;
     state.weightUnit = 'kg';
     updateUnitButtons();
     render();
@@ -1201,16 +1855,14 @@
 
   el.weightInput.addEventListener('input', render);
   el.thicknessInput.addEventListener('input', render);
-
   el.piecesInput.addEventListener('input', render);
+
   el.piecesDec.addEventListener('click', function () {
-    var v = parseInt(el.piecesInput.value, 10) || 1;
-    el.piecesInput.value = Math.max(1, v - 1);
+    el.piecesInput.value = Math.max(1, (parseInt(el.piecesInput.value, 10) || 1) - 1);
     render();
   });
   el.piecesInc.addEventListener('click', function () {
-    var v = parseInt(el.piecesInput.value, 10) || 1;
-    el.piecesInput.value = v + 1;
+    el.piecesInput.value = (parseInt(el.piecesInput.value, 10) || 1) + 1;
     render();
   });
 
@@ -1218,12 +1870,7 @@
     var opt = e.target.closest('.radio-option');
     if (!opt) return;
     state.cureType = opt.getAttribute('data-value');
-    updateCureTypeUI();
-    render();
-  });
-
-  el.startDateInput.addEventListener('change', function () {
-    state.startDate = el.startDateInput.value || todayISO();
+    updateRadioGroup(el.cureTypeGroup, state.cureType);
     render();
   });
 
@@ -1233,7 +1880,32 @@
     state.rub = opt.getAttribute('data-value');
     state.bay = state.rub === 'bay' || state.rub === 'paprika';
     state.paprika = state.rub === 'paprika';
-    updateRubUI();
+    updateRadioGroup(el.rubGroup, state.rub);
+    render();
+  });
+
+  el.nitritePresetGroup.addEventListener('click', function (e) {
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    state.nitritePreset = btn.getAttribute('data-pct');
+    if (state.nitritePreset === 'custom') {
+      state.nitritePct = parseFloat(el.nitriteCustomInput.value) || 0;
+    } else {
+      state.nitritePct = parseFloat(state.nitritePreset);
+    }
+    updateNitritePresetUI();
+    render();
+  });
+
+  el.nitriteCustomInput.addEventListener('input', function () {
+    if (state.nitritePreset !== 'custom') return;
+    var v = parseFloat(el.nitriteCustomInput.value);
+    state.nitritePct = isNaN(v) ? 0 : clamp(v, 0, 100);
+    render();
+  });
+
+  el.startDateInput.addEventListener('change', function () {
+    state.startDate = el.startDateInput.value || todayISO();
     render();
   });
 
@@ -1243,7 +1915,6 @@
     updateHangPresetUI();
     render();
   }
-
   el.hangWeeksInput.addEventListener('input', function () {
     var v = parseInt(el.hangWeeksInput.value, 10);
     if (isNaN(v)) return;
@@ -1252,35 +1923,33 @@
   el.hangWeeksInput.addEventListener('blur', function () {
     setHangWeeks(parseInt(el.hangWeeksInput.value, 10) || HANG_WEEKS_MIN);
   });
-  el.hangDec.addEventListener('click', function () {
-    setHangWeeks(state.hangWeeks - 1);
-  });
-  el.hangInc.addEventListener('click', function () {
-    setHangWeeks(state.hangWeeks + 1);
-  });
+  el.hangDec.addEventListener('click', function () { setHangWeeks(state.hangWeeks - 1); });
+  el.hangInc.addEventListener('click', function () { setHangWeeks(state.hangWeeks + 1); });
   el.hangPresetGroup.addEventListener('click', function (e) {
     var btn = e.target.closest('button');
-    if (!btn) return;
-    setHangWeeks(parseInt(btn.getAttribute('data-weeks'), 10));
+    if (btn) setHangWeeks(parseInt(btn.getAttribute('data-weeks'), 10));
   });
 
   el.smokeHoursInput.addEventListener('input', function () {
-    var v = clamp(parseInt(el.smokeHoursInput.value, 10) || SMOKE_HOURS_MIN, SMOKE_HOURS_MIN, SMOKE_HOURS_MAX);
-    state.smokeHours = v;
-    el.smokeHoursValue.textContent = v;
+    state.smokeHours = clamp(
+      parseInt(el.smokeHoursInput.value, 10) || SMOKE_HOURS_MIN,
+      SMOKE_HOURS_MIN, SMOKE_HOURS_MAX
+    );
     render();
   });
 
-  el.printBtn.addEventListener('click', function () {
-    window.print();
-  });
+  el.printBtn.addEventListener('click', function () { window.print(); });
 
   // ---- Init ----
   updateUnitButtons();
-  updateCureTypeUI();
-  updateRubUI();
+  updateRadioGroup(el.cureTypeGroup, state.cureType);
+  updateRadioGroup(el.rubGroup, state.rub);
   updateHangPresetUI();
+  updateNitritePresetUI();
+  applyStaticStrings();
+  updateLangUI();
   render();
+  restoreLocale();
 })();
 </script>
 

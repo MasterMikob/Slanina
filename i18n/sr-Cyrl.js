@@ -69,7 +69,8 @@ window.i18n["sr-Cyrl"] = {
     "ppPepper": "Бибер",
     "ppGarlic": "Бели лук",
     "ppBay": "Ловор",
-    "substitutionNoteCapped": "<strong>Ова со за сушење јесте ваша со — немојте додавати обичну со поврх ње.</strong> При {pct}% нитрита стандардних {standard} дало би {wouldBe} ppm, изнад границе од 200 ppm, па је доза смањена на {rate} — {curing} за ову шаржу, што даје {ppm} ppm."
+    "substitutionNoteCapped": "<strong>Доза је смањена испод стандардних {standard}.</strong> При {pct}% нитрита равних {standard} дало би {wouldBe} ppm, изнад границе од 200 ppm, па је со за сушење смањена на {curing} ({rate}), што даје {ppm} ppm. Додајте {topUp} обичне нејодиране соли да шаржа поново дође до пуних {target} соли — то не уноси додатни нитрит.",
+    "saltLabelTopUp": "Нејодирана со (допуна)"
   },
   "recipe": {
     "heading": "Рецепт / зачинска смеса",

@@ -1053,7 +1053,7 @@ var EN_AU = {
     "garlicLabel": "Garlic",
     "bayLabel": "Bay leaf",
     "substitutionNote": "<strong>This curing salt is your salt — do not add any plain salt on top.</strong> At {pct}% nitrite it is dosed flat at {rate} of meat, exactly as the packet specifies, which works out to {curing} for this batch and {ppm} ppm in the finished meat.",
-    "substitutionNoteCapped": "<strong>This curing salt is your salt — do not add any plain salt on top.</strong> At {pct}% nitrite the standard {standard} would give {wouldBe} ppm, above the 200 ppm limit, so the dose has been reduced to {rate} — {curing} for this batch, landing on {ppm} ppm.",
+    "substitutionNoteCapped": "<strong>Dose reduced below the standard {standard}.</strong> At {pct}% nitrite a flat {standard} would give {wouldBe} ppm, above the 200 ppm limit, so the curing salt has been cut to {curing} ({rate}), landing on {ppm} ppm. Add {topUp} of plain non-iodised salt to bring the batch back up to its full {target} of salt — that adds no further nitrite.",
     "paprikaNote": "<strong>After smoking:</strong> coat with {paprika} sweet paprika + {garlic} (15 g paprika and 2 cloves per kg). Applied after smoking, not part of the cure mix.",
     "perPieceHeading": "Per piece",
     "perPieceIntro": "({pieces}, {weight} each):",
@@ -1062,7 +1062,8 @@ var EN_AU = {
     "ppSugar": "Sugar",
     "ppPepper": "Pepper",
     "ppGarlic": "Garlic",
-    "ppBay": "Bay"
+    "ppBay": "Bay",
+    "saltLabelTopUp": "Non-iodised salt (top-up)"
   },
   "recipe": {
     "heading": "Recipe / rub",
@@ -1491,8 +1492,10 @@ var EN_AU = {
     }
 
     if (flatDosed) {
-      // The curing salt is the entire salt content of the batch.
-      result.saltG = 0;
+      // At the uncapped 25 g/kg dose the curing salt already is the whole
+      // salt budget, so this is 0. When the dose has been capped for nitrite,
+      // the shortfall is made up with plain salt, which carries no nitrite.
+      result.saltG = Math.max(0, saltTargetG - curingSaltG);
     } else {
       // Guard retained per spec; unreachable at >= 1% since the dose there
       // never exceeds 15.6 g/kg against a 25 g/kg budget.
@@ -1650,7 +1653,14 @@ var EN_AU = {
     // Regime B note — prominent, since it changes what goes in the bowl.
     var showSub = cs.ok && cs.flatDosed && totalKg > 0;
     el.substitutionNote.hidden = !showSub;
-    el.saltLabel.textContent = showSub ? t('cure.saltLabelReplaced') : t('cure.saltLabel');
+    if (!showSub) {
+      el.saltLabel.textContent = t('cure.saltLabel');
+    } else {
+      // A capped dose leaves room in the salt budget, so plain salt reappears
+      // as a top-up rather than being unnecessary.
+      el.saltLabel.textContent = cs.saltG > 0
+        ? t('cure.saltLabelTopUp') : t('cure.saltLabelReplaced');
+    }
     if (showSub) {
       if (cs.doseCapped) {
         // Don't claim "as the packet specifies" — this dose is below it.
@@ -1660,7 +1670,9 @@ var EN_AU = {
           wouldBe: formatNumber(cs.nominalPpm, 0),
           rate: rateLabel,
           curing: formatGrams(cs.curingSaltG, cs.decimals),
-          ppm: formatNumber(cs.ppm, 0)
+          ppm: formatNumber(cs.ppm, 0),
+          topUp: formatGrams(cs.saltG, 0),
+          target: formatGrams(cs.saltTargetG, 0)
         });
       } else {
         el.substitutionNote.innerHTML = t('cure.substitutionNote', {

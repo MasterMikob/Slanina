@@ -58,7 +58,7 @@
     "garlicLabel": "Garlic",
     "bayLabel": "Bay leaf",
     "substitutionNote": "<strong>This curing salt is your salt — do not add any plain salt on top.</strong> At {pct}% nitrite it is dosed flat at {rate} of meat, exactly as the packet specifies, which works out to {curing} for this batch and {ppm} ppm in the finished meat.",
-    "substitutionNoteCapped": "<strong>This curing salt is your salt — do not add any plain salt on top.</strong> At {pct}% nitrite the standard {standard} would give {wouldBe} ppm, above the 200 ppm limit, so the dose has been reduced to {rate} — {curing} for this batch, landing on {ppm} ppm.",
+    "substitutionNoteCapped": "<strong>Dose reduced below the standard {standard}.</strong> At {pct}% nitrite a flat {standard} would give {wouldBe} ppm, above the 200 ppm limit, so the curing salt has been cut to {curing} ({rate}), landing on {ppm} ppm. Add {topUp} of plain non-iodised salt to bring the batch back up to its full {target} of salt — that adds no further nitrite.",
     "paprikaNote": "<strong>After smoking:</strong> coat with {paprika} sweet paprika + {garlic} (15 g paprika and 2 cloves per kg). Applied after smoking, not part of the cure mix.",
     "perPieceHeading": "Per piece",
     "perPieceIntro": "({pieces}, {weight} each):",
@@ -67,7 +67,8 @@
     "ppSugar": "Sugar",
     "ppPepper": "Pepper",
     "ppGarlic": "Garlic",
-    "ppBay": "Bay"
+    "ppBay": "Bay",
+    "saltLabelTopUp": "Non-iodised salt (top-up)"
   },
   "recipe": {
     "heading": "Recipe / rub",

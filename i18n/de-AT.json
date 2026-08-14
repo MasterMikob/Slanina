@@ -67,7 +67,8 @@
     "ppPepper": "Pfeffer",
     "ppGarlic": "Knoblauch",
     "ppBay": "Lorbeer",
-    "substitutionNoteCapped": "<strong>Dieses Pökelsalz ist Ihr Salz — geben Sie kein normales Salz zusätzlich dazu.</strong> Bei {pct} % Nitrit ergäben die üblichen {standard} rund {wouldBe} ppm und lägen damit über der Grenze von 200 ppm. Die Dosis wurde daher auf {rate} reduziert — {curing} für diesen Ansatz, womit {ppm} ppm erreicht werden."
+    "substitutionNoteCapped": "<strong>Dosis unter die üblichen {standard} reduziert.</strong> Bei {pct} % Nitrit ergäben glatte {standard} rund {wouldBe} ppm und lägen damit über der Grenze von 200 ppm. Das Pökelsalz wurde daher auf {curing} ({rate}) gesenkt, womit {ppm} ppm erreicht werden. Geben Sie {topUp} normales, nicht jodiertes Salz dazu, damit der Ansatz wieder auf seine vollen {target} Salz kommt — das bringt kein zusätzliches Nitrit ein.",
+    "saltLabelTopUp": "Nicht jodiertes Salz (Ergänzung)"
   },
   "recipe": {
     "heading": "Rezept / Gewürzmischung",

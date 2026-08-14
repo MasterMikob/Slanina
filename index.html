@@ -1037,19 +1037,23 @@ var EN_AU = {
     "productLine": "Prague Powder #1 / Nitritpökelsalz / нитритна со",
     "productLineSuffix": "at {pct}% sodium nitrite",
     "ppmReadout": "{ppm} ppm nitrite in the finished meat",
-    "ppmTarget": "target 156 ppm"
+    "ppmTarget": "target 156 ppm",
+    "ppmFlatShort": "standard {rate} dose",
+    "ppmCappedShort": "reduced to {rate}",
+    "flatDoseNote": "Dosed at the standard {rate} — this lands in the accepted European range regardless of the exact concentration within the regulated 0.4–0.6% band."
   },
   "cure": {
     "heading": "The Cure (per batch)",
     "curingSaltLabel": "Curing salt",
     "weighWarning": "Weigh on 0.1 g scales. Never estimate.",
     "saltLabel": "Non-iodised salt",
-    "saltLabelReduced": "Non-iodised salt (reduced)",
+    "saltLabelReplaced": "Non-iodised salt (not needed)",
     "sugarLabel": "Sugar",
     "pepperLabel": "Cracked black pepper",
     "garlicLabel": "Garlic",
     "bayLabel": "Bay leaf",
-    "substitutionNote": "<strong>This curing salt replaces your plain salt, it does not add to it.</strong> At {pct}% nitrite the dose is {curing}, so the plain salt below has been cut to {salt} — the two together still come to the {target} total salt for this batch.",
+    "substitutionNote": "<strong>This curing salt is your salt — do not add any plain salt on top.</strong> At {pct}% nitrite it is dosed flat at {rate} of meat, exactly as the packet specifies, which works out to {curing} for this batch and {ppm} ppm in the finished meat.",
+    "substitutionNoteCapped": "<strong>This curing salt is your salt — do not add any plain salt on top.</strong> At {pct}% nitrite the standard {standard} would give {wouldBe} ppm, above the 200 ppm limit, so the dose has been reduced to {rate} — {curing} for this batch, landing on {ppm} ppm.",
     "paprikaNote": "<strong>After smoking:</strong> coat with {paprika} sweet paprika + {garlic} (15 g paprika and 2 cloves per kg). Applied after smoking, not part of the cure mix.",
     "perPieceHeading": "Per piece",
     "perPieceIntro": "({pieces}, {weight} each):",
@@ -1136,6 +1140,7 @@ var EN_AU = {
   "units": {
     "gram": "g",
     "kilogram": "kg",
+    "gramsPerKilo": "g/kg",
     "hour": "h",
     "percent": "%",
     "days_one": "{n} day",
@@ -1388,16 +1393,27 @@ var EN_AU = {
   /*
    * Curing salt from the product's actual nitrite strength.
    *
-   * A fixed 2.5 g/kg is only correct for 6.25% Prague Powder #1. European
-   * Nitritpökelsalz / nitritna so are 0.5-0.6% nitrite and are dosed around
-   * 25 g/kg in place of the plain salt. Dosing one at the other's rate is
-   * wrong by roughly a factor of ten in either direction, so the dose is
-   * always derived from the entered percentage.
+   * Two regimes, because the two families of product are used differently
+   * in practice and one formula cannot serve both:
+   *
+   *   A (>= 1% nitrite) — Prague Powder #1 / Cure #1. Concentrated, so the
+   *     dose is small and precision matters. Solve backward for 156 ppm.
+   *     Added on top of the plain salt.
+   *
+   *   B (< 1% nitrite) — Nitritpökelsalz / nitritna so. Packets specify a
+   *     flat 25 g/kg whatever the exact strength inside the regulated
+   *     0.4-0.6% band, because that always lands safely (~100-150 ppm).
+   *     Dose flat and report the ppm it produces; the curing salt IS the
+   *     salt, so no plain salt is added.
+   *
+   * Both regimes are hard-capped at 200 ppm and both refuse a dose that
+   * rounds away to zero.
    */
   function computeCuringSalt(kg, nitritePct) {
     var result = {
       ok: false, error: null, errorVars: null,
-      curingSaltG: 0, saltG: 0, ppm: 0, decimals: 1, substitutes: false
+      curingSaltG: 0, saltG: 0, ppm: 0, decimals: 1,
+      flatDosed: false, doseCapped: false, ratePerKg: SALT_TARGET_PER_KG
     };
 
     if (!(nitritePct > 0)) {
@@ -1406,60 +1422,90 @@ var EN_AU = {
     }
 
     var saltTargetG = kg * SALT_TARGET_PER_KG;
-    var substitutes = nitritePct < SUBSTITUTION_THRESHOLD_PCT;
-    // 0.1 g precision is meaningful at 6.25%; at 0.5-0.6% the dose is 20 g+
-    // and that precision would be spurious.
-    var decimals = substitutes ? 0 : 1;
+    var flatDosed = nitritePct < SUBSTITUTION_THRESHOLD_PCT;
+    result.flatDosed = flatDosed;
+    result.saltTargetG = saltTargetG;
 
     if (kg <= 0) {
       result.ok = true;
-      result.decimals = decimals;
-      result.substitutes = substitutes;
+      result.decimals = flatDosed ? 0 : 1;
       return result;
     }
 
-    // Grams of product needed to put NITRITE_TARGET_PPM into the meat.
-    var rawG = (kg * (NITRITE_TARGET_PPM / 1000)) / (nitritePct / 100);
-    var step = substitutes ? 1 : 0.1;
-    var curingSaltG = Math.round(rawG / step) * step;
+    var rawG;
+    if (flatDosed) {
+      // REGIME B — flat packet dose, not solved backward from a ppm target.
+      var perKg = SALT_TARGET_PER_KG;
+      var nominalPpm = SALT_TARGET_PER_KG * (nitritePct / 100) * 1000;
+      if (nominalPpm > NITRITE_MAX_PPM) {
+        // Custom strengths near the top of the band (above ~0.8%) would push
+        // the flat dose past the cap; pull it back to exactly 200 ppm.
+        perKg = (NITRITE_MAX_PPM / 1000) / (nitritePct / 100);
+        result.doseCapped = true;
+        result.nominalPpm = nominalPpm;
+      }
+      result.ratePerKg = perKg;
+      rawG = kg * perKg;
+    } else {
+      // REGIME A — grams needed to put NITRITE_TARGET_PPM into the meat.
+      rawG = (kg * (NITRITE_TARGET_PPM / 1000)) / (nitritePct / 100);
+    }
 
-    // A dose that rounds to zero is not a valid cure — it would render as
-    // "0.0 g" and read like a real answer while delivering no nitrite at all.
+    // 1 g steps only once the dose is big enough for 0.1 g to be spurious.
+    var step = (flatDosed && rawG >= 10) ? 1 : 0.1;
+    var decimals = step === 1 ? 0 : 1;
+
+    function quantise(g) { return Math.round(Math.round(g / step) * step * 10) / 10; }
+    function ppmOf(g) { return (g * (nitritePct / 100)) / kg * 1000; }
+
+    var curingSaltG = quantise(rawG);
+
+    // Rounding to nearest can land just over the cap on small batches (and
+    // just after a capped dose). Step down to the next increment rather than
+    // refusing a batch for which a valid, lower dose plainly exists.
+    if (ppmOf(curingSaltG) > NITRITE_MAX_PPM) {
+      curingSaltG = Math.round((Math.floor(rawG / step) * step) * 10) / 10;
+    }
+
+    // A dose that rounds away to zero is not a valid cure — it would render
+    // as "0.0 g" and read like a real answer while delivering no nitrite.
     if (curingSaltG <= 0) {
       result.error = 'batchTooSmall';
       result.errorVars = {
         pct: formatNumber(nitritePct, 2),
-        weight: kg < 1 ? formatGrams(kg * 1000, 0) : formatGrams(kg * 1000, 0)
+        weight: formatGrams(kg * 1000, 0)
       };
       return result;
     }
 
     // ppm recomputed from the rounded dose so the readout matches what
     // actually gets weighed out.
-    var ppm = (curingSaltG * (nitritePct / 100)) / kg * 1000;
+    var ppm = ppmOf(curingSaltG);
 
-    // HARD CAP: nothing above 200 ppm is ever rendered.
+    // HARD CAP: nothing above 200 ppm is ever rendered, in either regime.
+    // Reachable only when even the smallest weighable dose overshoots.
     if (ppm > NITRITE_MAX_PPM) {
       result.error = 'nitriteOverCap';
       result.errorVars = { ppm: formatNumber(ppm, 0) };
       return result;
     }
 
-    if (substitutes) {
+    if (flatDosed) {
+      // The curing salt is the entire salt content of the batch.
+      result.saltG = 0;
+    } else {
+      // Guard retained per spec; unreachable at >= 1% since the dose there
+      // never exceeds 15.6 g/kg against a 25 g/kg budget.
       if (curingSaltG > saltTargetG) {
-        // Can't reach the nitrite target inside the batch's salt budget.
-        var maxPpm = (saltTargetG * (nitritePct / 100)) / kg * 1000;
         result.error = 'saltBudgetExceeded';
         result.errorVars = {
-          pct: formatNumber(nitritePct, nitritePct < 1 ? 2 : 2),
+          pct: formatNumber(nitritePct, 2),
           needed: formatGrams(curingSaltG, 0),
           target: formatGrams(saltTargetG, 0),
-          maxPpm: formatNumber(maxPpm, 0)
+          maxPpm: formatNumber((saltTargetG * (nitritePct / 100)) / kg * 1000, 0)
         };
         return result;
       }
-      result.saltG = saltTargetG - curingSaltG;
-    } else {
       result.saltG = saltTargetG;
     }
 
@@ -1467,8 +1513,6 @@ var EN_AU = {
     result.curingSaltG = curingSaltG;
     result.ppm = ppm;
     result.decimals = decimals;
-    result.substitutes = substitutes;
-    result.saltTargetG = saltTargetG;
     return result;
   }
 
@@ -1581,13 +1625,19 @@ var EN_AU = {
     el.csProductLine.textContent = t('nitrite.productLine') + ' — ' +
       t('nitrite.productLineSuffix', { pct: formatNumber(state.nitritePct, 2) });
 
+    var rateLabel = formatNumber(cs.ratePerKg, cs.ratePerKg % 1 === 0 ? 0 : 1) +
+      ' ' + t('units.gramsPerKilo');
+
     if (cs.ok) {
       el.csAmountWrap.hidden = false;
       el.csPpm.hidden = false;
       el.csError.hidden = true;
       el.csAmount.textContent = formatGrams(cs.curingSaltG, cs.decimals);
+      // Regime B is a flat packet dose, so it must not claim a 156 ppm target.
       el.csPpm.textContent = t('nitrite.ppmReadout', { ppm: formatNumber(cs.ppm, 0) }) +
-        ' · ' + t('nitrite.ppmTarget');
+        ' · ' + (cs.flatDosed
+          ? t(cs.doseCapped ? 'nitrite.ppmCappedShort' : 'nitrite.ppmFlatShort', { rate: rateLabel })
+          : t('nitrite.ppmTarget'));
       el.saltAmount.textContent = formatGrams(cs.saltG, 0);
     } else {
       el.csAmountWrap.hidden = true;
@@ -1597,17 +1647,29 @@ var EN_AU = {
       el.saltAmount.textContent = '—';
     }
 
-    // Substitution note — prominent, since it changes what goes in the bowl.
-    var showSub = cs.ok && cs.substitutes && totalKg > 0;
+    // Regime B note — prominent, since it changes what goes in the bowl.
+    var showSub = cs.ok && cs.flatDosed && totalKg > 0;
     el.substitutionNote.hidden = !showSub;
-    el.saltLabel.textContent = showSub ? t('cure.saltLabelReduced') : t('cure.saltLabel');
+    el.saltLabel.textContent = showSub ? t('cure.saltLabelReplaced') : t('cure.saltLabel');
     if (showSub) {
-      el.substitutionNote.innerHTML = t('cure.substitutionNote', {
-        pct: formatNumber(state.nitritePct, 2),
-        curing: formatGrams(cs.curingSaltG, cs.decimals),
-        salt: formatGrams(cs.saltG, 0),
-        target: formatGrams(cs.saltTargetG, 0)
-      });
+      if (cs.doseCapped) {
+        // Don't claim "as the packet specifies" — this dose is below it.
+        el.substitutionNote.innerHTML = t('cure.substitutionNoteCapped', {
+          pct: formatNumber(state.nitritePct, 2),
+          standard: formatNumber(SALT_TARGET_PER_KG, 0) + ' ' + t('units.gramsPerKilo'),
+          wouldBe: formatNumber(cs.nominalPpm, 0),
+          rate: rateLabel,
+          curing: formatGrams(cs.curingSaltG, cs.decimals),
+          ppm: formatNumber(cs.ppm, 0)
+        });
+      } else {
+        el.substitutionNote.innerHTML = t('cure.substitutionNote', {
+          pct: formatNumber(state.nitritePct, 2),
+          rate: rateLabel,
+          curing: formatGrams(cs.curingSaltG, cs.decimals),
+          ppm: formatNumber(cs.ppm, 0)
+        }) + ' ' + t('nitrite.flatDoseNote', { rate: rateLabel });
+      }
     }
 
     el.sugarAmount.textContent = formatGrams(cure.sugarG, 0);

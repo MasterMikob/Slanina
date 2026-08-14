@@ -42,19 +42,22 @@
     "productLine": "Prague Powder #1 / Nitritpökelsalz / нитритна со",
     "productLineSuffix": "са {pct}% натријум-нитрита",
     "ppmReadout": "{ppm} ppm нитрита у готовом месу",
-    "ppmTarget": "циљ 156 ppm"
+    "ppmTarget": "циљ 156 ppm",
+    "ppmFlatShort": "стандардна доза {rate}",
+    "flatDoseNote": "Дозира се стандардних {rate} — тако се увек остаје у прихваћеном европском опсегу, без обзира на тачну концентрацију унутар прописаног опсега од 0,4–0,6%.",
+    "ppmCappedShort": "смањено на {rate}"
   },
   "cure": {
     "heading": "Смеса за сушење (за целу шаржу)",
     "curingSaltLabel": "Со за сушење",
     "weighWarning": "Мерите на ваги прецизности 0,1 g. Никада не процењујте одока.",
     "saltLabel": "Нејодирана со",
-    "saltLabelReduced": "Нејодирана со (умањена)",
+    "saltLabelReplaced": "Нејодирана со (није потребна)",
     "sugarLabel": "Шећер",
     "pepperLabel": "Крупно млевени црни бибер",
     "garlicLabel": "Бели лук",
     "bayLabel": "Ловоров лист",
-    "substitutionNote": "<strong>Ова со за сушење замењује обичну со, не додаје се на њу.</strong> При {pct}% нитрита доза износи {curing}, па је количина обичне соли испод смањена на {salt} — заједно и даље дају укупно {target} соли за ову шаржу.",
+    "substitutionNote": "<strong>Ова со за сушење јесте ваша со — немојте додавати обичну со поврх ње.</strong> При {pct}% нитрита дозира се равних {rate} меса, тачно како стоји на паковању, што за ову шаржу износи {curing} и даје {ppm} ppm у готовом месу.",
     "paprikaNote": "<strong>После димљења:</strong> премажите са {paprika} слатке алеве паприке и {garlic} (15 g паприке и 2 чена по килограму). Наноси се после димљења и није део смесе за сушење.",
     "perPieceHeading": "По комаду",
     "perPieceIntro": "({pieces}, по {weight}):",
@@ -63,7 +66,8 @@
     "ppSugar": "Шећер",
     "ppPepper": "Бибер",
     "ppGarlic": "Бели лук",
-    "ppBay": "Ловор"
+    "ppBay": "Ловор",
+    "substitutionNoteCapped": "<strong>Ова со за сушење јесте ваша со — немојте додавати обичну со поврх ње.</strong> При {pct}% нитрита стандардних {standard} дало би {wouldBe} ppm, изнад границе од 200 ppm, па је доза смањена на {rate} — {curing} за ову шаржу, што даје {ppm} ppm."
   },
   "recipe": {
     "heading": "Рецепт / зачинска смеса",
@@ -141,6 +145,7 @@
   "units": {
     "gram": "g",
     "kilogram": "kg",
+    "gramsPerKilo": "g/kg",
     "hour": "h",
     "percent": "%",
     "days_one": "{n} дан",

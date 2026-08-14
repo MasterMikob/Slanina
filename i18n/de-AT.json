@@ -42,19 +42,22 @@
     "productLine": "Prague Powder #1 / Nitritpökelsalz / нитритна со",
     "productLineSuffix": "mit {pct} % Natriumnitrit",
     "ppmReadout": "{ppm} ppm Nitrit im fertigen Fleisch",
-    "ppmTarget": "Ziel 156 ppm"
+    "ppmTarget": "Ziel 156 ppm",
+    "ppmFlatShort": "Standarddosis {rate}",
+    "flatDoseNote": "Dosiert mit den üblichen {rate} — damit liegt man unabhängig vom genauen Gehalt innerhalb des geregelten Bereichs von 0,4–0,6 % immer im anerkannten europäischen Rahmen.",
+    "ppmCappedShort": "reduziert auf {rate}"
   },
   "cure": {
     "heading": "Die Pökelmischung (pro Ansatz)",
     "curingSaltLabel": "Pökelsalz",
     "weighWarning": "Auf einer 0,1-g-Waage abwiegen. Niemals schätzen.",
     "saltLabel": "Nicht jodiertes Salz",
-    "saltLabelReduced": "Nicht jodiertes Salz (reduziert)",
+    "saltLabelReplaced": "Nicht jodiertes Salz (nicht nötig)",
     "sugarLabel": "Zucker",
     "pepperLabel": "Grob gemahlener schwarzer Pfeffer",
     "garlicLabel": "Knoblauch",
     "bayLabel": "Lorbeerblatt",
-    "substitutionNote": "<strong>Dieses Pökelsalz ersetzt das normale Salz, es kommt nicht zusätzlich dazu.</strong> Bei {pct} % Nitrit beträgt die Dosis {curing}, deshalb wurde das normale Salz unten auf {salt} reduziert — zusammen ergeben beide weiterhin die {target} Gesamtsalz für diesen Ansatz.",
+    "substitutionNote": "<strong>Dieses Pökelsalz ist Ihr Salz — geben Sie kein normales Salz zusätzlich dazu.</strong> Bei {pct} % Nitrit wird es glatt mit {rate} Fleisch dosiert, genau wie auf der Packung angegeben. Für diesen Ansatz sind das {curing} und ergeben {ppm} ppm im fertigen Fleisch.",
     "paprikaNote": "<strong>Nach dem Räuchern:</strong> mit {paprika} edelsüßem Paprikapulver und {garlic} einreiben (15 g Paprikapulver und 2 Zehen pro kg). Kommt erst nach dem Räuchern drauf und gehört nicht zur Pökelmischung.",
     "perPieceHeading": "Pro Stück",
     "perPieceIntro": "({pieces}, je {weight}):",
@@ -63,7 +66,8 @@
     "ppSugar": "Zucker",
     "ppPepper": "Pfeffer",
     "ppGarlic": "Knoblauch",
-    "ppBay": "Lorbeer"
+    "ppBay": "Lorbeer",
+    "substitutionNoteCapped": "<strong>Dieses Pökelsalz ist Ihr Salz — geben Sie kein normales Salz zusätzlich dazu.</strong> Bei {pct} % Nitrit ergäben die üblichen {standard} rund {wouldBe} ppm und lägen damit über der Grenze von 200 ppm. Die Dosis wurde daher auf {rate} reduziert — {curing} für diesen Ansatz, womit {ppm} ppm erreicht werden."
   },
   "recipe": {
     "heading": "Rezept / Gewürzmischung",
@@ -141,6 +145,7 @@
   "units": {
     "gram": "g",
     "kilogram": "kg",
+    "gramsPerKilo": "g/kg",
     "hour": "h",
     "percent": "%",
     "days_one": "{n} Tag",
